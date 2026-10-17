@@ -1,0 +1,120 @@
+/* =====================================================
+   HOME.CSS — tampilan beranda (kumpulan media)
+   ===================================================== */
+
+.home {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 44px 20px 60px;
+}
+
+.home-head { text-align: center; margin-bottom: 34px; }
+
+.home-ar {
+  display: block;
+  font-family: var(--font-ar);
+  font-weight: 900;
+  font-size: 2.6rem;
+  line-height: 1.5;
+  color: var(--brand);
+  -webkit-text-stroke: 7px #fff;
+  paint-order: stroke fill;
+  text-shadow: 0 6px 14px rgba(3, 105, 161, 0.25);
+}
+
+.home-title {
+  display: inline-block;
+  margin: 4px 0 0;
+  padding: 5px 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--brand);
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(3, 105, 161, 0.3);
+}
+
+.home-lead { margin: 16px 0 0; font-size: 1.1rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 22px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 26px 24px 22px;
+  color: inherit;
+  text-decoration: none;
+  background: var(--card);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 3px solid #fff;
+  border-radius: 28px;
+  box-shadow: 0 12px 28px rgba(3, 105, 161, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+a.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 34px rgba(3, 105, 161, 0.24);
+}
+
+a.card:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+
+.card-num {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #fff;
+  background: var(--brand);
+  border-radius: 50%;
+}
+
+.card-emoji { font-size: 3.2rem; line-height: 1.1; }
+
+.card-ar {
+  font-family: var(--font-ar);
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--brand);
+}
+
+.card-name { margin: 2px 0 0; font-size: 1.3rem; }
+.card-desc { margin: 4px 0 8px; font-size: 0.98rem; line-height: 1.4; color: #334155; }
+
+.card-tag {
+  margin-top: auto;
+  padding: 3px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 999px;
+}
+
+.tag--ready { background: #16a34a; }
+.tag--draft { background: #d97706; }
+.tag--soon  { background: #94a3b8; }
+
+/* Slot kosong (belum ada media) */
+.card--soon {
+  cursor: default;
+  background: rgba(255, 255, 255, 0.45);
+  border: 3px dashed #7dc3ea;
+  box-shadow: none;
+}
+
+.card--soon .card-emoji { opacity: 0.55; filter: grayscale(0.4); }
+.card--soon .card-num { background: #94a3b8; }

@@ -1,0 +1,22 @@
+PANDUAN MUSIK LATAR — Uno Hijaiyah
+================================
+
+Taruh file musikmu di folder ini dengan nama:
+
+  backsound.mp3
+
+Lalu muat ulang halaman (Ctrl+F5). Tombol 🔊 akan muncul di pojok
+kanan atas. Musik mulai saat pengguna pertama kali mengklik halaman
+(aturan browser, tidak bisa otomatis tanpa klik).
+
+Memakai nama atau format lain (misalnya lagu.ogg)?
+  Buka index.html, cari baris:
+      data-src="audio/backsound.mp3"
+  lalu ganti sesuai nama filemu.
+
+Mengatur keras-pelannya:
+  Di baris yang sama, ubah data-volume (0 = senyap, 1 = penuh).
+  Disarankan 0.25 - 0.4 supaya suara guru/siswa tetap jelas.
+
+Kalau file belum ada, tombol 🔊 tidak muncul dan halaman tetap normal.
+Pakai musik yang bebas hak cipta / punyamu sendiri ya.

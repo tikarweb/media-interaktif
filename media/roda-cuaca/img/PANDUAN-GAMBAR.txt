@@ -1,0 +1,28 @@
+PANDUAN GAMBAR — Roda Cuaca
+===========================
+
+Taruh file di folder ini dengan nama persis seperti di bawah.
+Kalau file belum ada, roda otomatis memakai emoji sebagai cadangan.
+
+GAMBAR ISI RODA (5 file)
+  cerah.png      -> مُشْمِس  (cerah)
+  berangin.png   -> عَاصِف   (berangin)
+  hujan.png      -> مُمْطِر  (hujan)
+  petir.png      -> رَعْدِي  (petir / badai)
+  berawan.png    -> غَائِم  (berawan)
+
+  Ukuran ideal : 600 x 600 px, persegi
+  Format       : PNG atau WebP dengan latar TRANSPARAN
+  Posisi objek : di tengah, sisakan margin tipis di sekeliling
+  (Gambar otomatis diperkecil ke kotak 92 px (satuan kanvas) di dalam roda,
+   proporsinya tetap terjaga.)
+
+LATAR HALAMAN (opsional)
+  latar.jpg      -> foto langit / awan / suasana kelas
+
+  Ukuran ideal : 1920 x 1080 px atau lebih
+  Pilih foto yang tidak terlalu ramai di bagian tengah.
+  Kalau tidak ada, latar otomatis gradasi langit + awan bergerak.
+
+Ingin mengubah ukuran gambar di dalam roda?
+  Buka script.js -> cari LAYOUT -> ubah angka imgBox (tulisan menyesuaikan otomatis).

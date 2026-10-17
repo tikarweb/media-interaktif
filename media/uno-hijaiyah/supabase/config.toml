@@ -1,0 +1,6 @@
+# Konfigurasi Supabase CLI untuk HarakaPlay.
+# verify_jwt = false: fungsi "game" memeriksa sendiri token pengguna
+# (auth.getUser) pada setiap permintaan, sehingga kompatibel dengan
+# kunci publishable baru. Tanpa token valid, semua aksi ditolak.
+[functions.game]
+verify_jwt = false

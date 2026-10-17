@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda Putar Cuaca Bahasa Arab Interaktif</title>
+    <link rel="stylesheet" href="../../assets/css/fonts.css">
+
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Latar roda: matahari, pelangi, awan, bukit -->
+    <div class="page-bg page-bg--scene" aria-hidden="true">
+        <div class="scene-sun"></div>
+        <div class="scene-rainbow"></div>
+        <span class="cloud cloud--1"></span>
+        <span class="cloud cloud--2"></span>
+        <span class="cloud cloud--3"></span>
+        <svg class="scene-hills" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path fill="#b5e8a9" d="M0,190 C240,110 480,250 720,180 C960,110 1200,230 1440,160 L1440,320 L0,320Z" />
+            <path fill="#86d68a" d="M0,245 C300,175 540,295 840,235 C1080,185 1260,265 1440,225 L1440,320 L0,320Z" />
+            <path fill="#52b96e" d="M0,288 C360,238 700,318 1000,278 C1200,252 1340,288 1440,268 L1440,320 L0,320Z" />
+        </svg>
+    </div>
+
+    <a class="btn-back" href="../../index.html">← Beranda</a>
+
+    <header class="page-header">
+        <h1>
+            <span class="title-ar" id="titleAr">حَالَةُ الطَّقْسِ</span>
+            <span class="title-id" id="titleId">Kondisi Cuaca</span>
+        </h1>
+    </header>
+
+    <div class="stage-wrap">
+        <main class="stage">
+            <!-- Menu ganti materi: muncul otomatis kalau ada lebih dari satu materi di data.js -->
+            <label class="set-picker" id="setPicker" hidden>
+                <span>Materi</span>
+                <select id="setSelect"></select>
+            </label>
+
+            <div class="arrow-item arrow-left">
+                <span class="arrow-bubble" id="promptLeft">أَمْسِ كَانَ الطَّالِبُ...</span>
+                <span class="arrow-pointer">▼</span>
+            </div>
+            <div class="arrow-item arrow-center">
+                <span class="arrow-bubble" id="promptCenter">اليَوْمَ الطَّالِبُ...</span>
+                <span class="arrow-pointer">▼</span>
+            </div>
+            <div class="arrow-item arrow-right">
+                <span class="arrow-pointer">▼</span>
+                <span class="arrow-bubble" id="promptRight">غَدًا سَيَـ...</span>
+            </div>
+
+            <div class="wheel-container">
+                <canvas id="wheelCanvas" class="wheel-canvas" width="800" height="800"></canvas>
+            </div>
+            <div class="wheel-center-dot"></div>
+
+            <button class="btn-spin-wheel" id="spinBtn">PUTAR RODA 🔄</button>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+    <script src="../../assets/js/backsound.js" data-src="audio/backsound.mp3" data-volume="0.35"></script>
+</body>
+
+</html>

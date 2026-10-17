@@ -1,0 +1,310 @@
+/* =====================================================
+   STYLE.CSS — tampilan khusus media "Roda Cuaca".
+   Gaya umum (font, latar langit, awan) ada di
+   ../../assets/css/base.css
+   ===================================================== */
+
+/* Foto latar (opsional). Taruh file bernama latar.jpg di folder img/.
+   Kalau file belum ada, otomatis tampil gradasi langit + awan. */
+:root {
+  --bg-image: url('img/latar.jpg');
+}
+
+/* ---------- Judul ---------- */
+.page-header {
+  text-align: center;
+  padding: 10px 12px 4px;
+}
+
+/* Hilangkan jarak bawaan h1 supaya judul tidak memakan tinggi layar
+   (tampilan judul sendiri tidak diubah) */
+.page-header h1 { margin: 0; }
+
+.title-ar {
+  display: block;
+  font-family: var(--font-ar);
+  font-weight: 900;
+  font-size: 3rem;
+  line-height: 1.35;
+  color: var(--brand);
+  /* garis putih tebal ala stiker */
+  -webkit-text-stroke: 8px #fff;
+  paint-order: stroke fill;
+  text-shadow: 0 6px 14px rgba(3, 105, 161, 0.25);
+}
+
+.title-id {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 4px 18px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--brand);
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(3, 105, 161, 0.3);
+}
+
+/* ---------- Panggung ---------- */
+.stage-wrap {
+  margin: 8px auto 12px;
+}
+
+.stage {
+  position: relative;
+  width: 1180px;
+  height: 652px;
+  transform-origin: top left;
+  background: var(--card);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 44px;
+  border: 4px solid #fff;
+  box-shadow: 0 24px 50px rgba(3, 105, 161, 0.18);
+}
+
+/* ---------- Penunjuk (kemarin / hari ini / besok) ---------- */
+.arrow-item {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.arrow-bubble {
+  font-family: var(--font-ar);
+  font-size: 1.5rem;
+  font-weight: 700;
+  direction: rtl;
+  background: #fff;
+  padding: 6px 16px;
+  border-radius: 24px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border: 3px solid currentColor;
+  white-space: nowrap;
+}
+
+.arrow-pointer {
+  font-size: 2.1rem;
+  line-height: 1;
+  text-shadow: 0 3px 5px rgba(0, 0, 0, 0.12);
+}
+
+/* Titik tengah roda: x = 590, y = 358 */
+.arrow-center {
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  gap: 0;
+  color: #dc2626;
+}
+
+.arrow-center .arrow-pointer { margin-top: -4px; }
+
+/* Panah kiri & kanan dipasang menempel ke tepi roda
+   (tepi kiri roda x = 310, tepi kanan x = 870, plus cincin biru 6px).
+   Mau lebih dekat / jauh? ubah angka 884px pada .arrow-left (right) dan .arrow-right (left). */
+.arrow-left {
+  top: 358px;
+  right: 884px;
+  transform: translateY(-50%);
+  color: #0284c7;
+}
+
+.arrow-left .arrow-pointer { transform: rotate(-90deg); }
+
+.arrow-right {
+  top: 358px;
+  left: 884px;
+  transform: translateY(-50%);
+  color: #ea580c;
+}
+
+.arrow-right .arrow-pointer { transform: rotate(90deg); }
+
+/* ---------- Menu ganti materi (pojok kiri atas panggung) ---------- */
+.set-picker {
+  position: absolute;
+  top: 22px;
+  left: 26px;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--brand);
+}
+
+.set-picker[hidden] { display: none; }
+
+.set-picker select {
+  max-width: 260px;
+  padding: 8px 14px;
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--brand);
+  background: #fff;
+  border: 3px solid #38bdf8;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.set-picker select:focus-visible { outline: 4px solid #fde047; outline-offset: 2px; }
+
+/* ---------- Roda ---------- */
+.wheel-container {
+  position: absolute;
+  top: 78px;
+  left: 310px;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  border: 12px solid #fff;
+  background: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 6px #38bdf8,
+    0 20px 40px rgba(3, 105, 161, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.wheel-container:hover { transform: scale(1.015); }
+
+.wheel-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wheel-center-dot {
+  position: absolute;
+  top: 358px;
+  left: 590px;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #e0f2fe);
+  border: 5px solid #0284c7;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ---------- Tombol ---------- */
+.btn-spin-wheel {
+  /* Tombol di kolom kanan, di bawah panah "besok", supaya roda bisa besar */
+  position: absolute;
+  top: 470px;
+  left: 1032px;
+  transform: translateX(-50%);
+  padding: 16px 30px;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(to bottom, #22c55e, #16a34a);
+  border: none;
+  border-bottom: 5px solid #15803d;
+  border-radius: 32px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.4);
+  z-index: 12;
+  transition: filter 0.15s ease;
+}
+
+.btn-spin-wheel:hover { filter: brightness(1.06); }
+
+.btn-spin-wheel:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+.btn-spin-wheel:focus-visible {
+  outline: 4px solid #fde047;
+  outline-offset: 3px;
+}
+
+/* =====================================================
+   LATAR KHUSUS RODA — langit cerah, matahari, pelangi, bukit.
+   (Beranda tetap memakai langit + awan polos dari base.css.)
+   Mau foto sendiri? Simpan img/latar.jpg — otomatis tampil
+   di bawah lapisan ini; hapus elemen scene di index.html
+   kalau ingin foto saja.
+   ===================================================== */
+.page-bg--scene {
+  background:
+    var(--bg-image) center / cover no-repeat,
+    linear-gradient(180deg, #3d9be9 0%, #86cffa 38%, #d3efff 68%, #fff1bd 100%);
+}
+
+.page-bg--scene .cloud,
+.scene-sun,
+.scene-rainbow,
+.scene-hills { z-index: 1; }
+
+/* Matahari di pojok kiri atas, sinarnya berputar pelan */
+.scene-sun {
+  position: absolute;
+  top: -110px;
+  left: -110px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    #fffbd0 0 28%, #ffe066 29% 44%,
+    rgba(255, 224, 102, 0.32) 45% 60%, transparent 61%);
+}
+
+.scene-sun::before {
+  content: "";
+  position: absolute;
+  inset: -90px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(rgba(255, 238, 140, 0.6) 0 7deg, transparent 7deg 22.5deg);
+  -webkit-mask: radial-gradient(circle, transparent 34%, #000 36%, transparent 70%);
+  mask: radial-gradient(circle, transparent 34%, #000 36%, transparent 70%);
+  animation: sun-spin 70s linear infinite;
+}
+
+@keyframes sun-spin { to { transform: rotate(360deg); } }
+
+/* Pelangi di belakang panggung */
+.scene-rainbow {
+  position: absolute;
+  left: 50%;
+  bottom: 9vh;
+  width: min(1000px, 96vw);
+  aspect-ratio: 2 / 1;
+  transform: translateX(-50%);
+  opacity: 0.5;
+  /* setengah lingkaran: pusat di tengah-bawah, jari-jari = setengah lebar */
+  background: radial-gradient(circle farthest-side at 50% 100%,
+    transparent 0 66%,
+    #ef4444 66% 70%, #f97316 70% 74%, #facc15 74% 78%,
+    #4ade80 78% 82%, #38bdf8 82% 86%, #818cf8 86% 90%,
+    transparent 90%);
+}
+
+/* Bukit hijau berlapis di bagian bawah */
+.scene-hills {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 28vh;
+  min-height: 150px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-sun::before { animation: none; }
+}

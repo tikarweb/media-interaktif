@@ -1,0 +1,163 @@
+/* =====================================================
+   BASE.CSS — gaya dasar yang dipakai SEMUA media interaktif
+   (font, warna, latar langit, awan). Satu kali dibuat,
+   dipakai ulang oleh setiap media di folder /media/.
+   ===================================================== */
+
+:root {
+  /* Font */
+  --font-ui: 'Fredoka', 'Segoe UI', sans-serif;
+  --font-ar: 'Cairo', 'Segoe UI', sans-serif;
+  --font-sub: 'Scheherazade New', 'Cairo', serif;
+
+  /* Warna */
+  --ink: #0c4a6e;
+  --ink-soft: #1e3a8a;
+  --brand: #0369a1;
+  --card: rgba(255, 255, 255, 0.72);
+
+  /* Foto latar (opsional). Diisi dari style.css masing-masing media. */
+  --bg-image: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  color: var(--ink);
+  min-height: 100vh;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Latar belakang ---------- */
+/* Urutan lapisan: foto (kalau ada) -> gradasi langit.
+   Kalau foto belum ada, otomatis tampil gradasi saja. */
+.page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    var(--bg-image) center / cover no-repeat,
+    linear-gradient(180deg, #7dd3fc 0%, #bae6fd 38%, #e0f2fe 75%, #f0f9ff 100%);
+}
+
+/* Lapisan putih tipis supaya konten tetap terbaca di atas foto */
+.page-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Awan melayang (murni CSS, tanpa gambar) */
+.cloud {
+  position: absolute;
+  left: -220px;
+  width: 140px;
+  height: 44px;
+  background: #fff;
+  border-radius: 999px;
+  opacity: 0.75;
+  animation: cloud-drift linear infinite;
+  z-index: 1;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.cloud::before {
+  width: 64px;
+  height: 64px;
+  top: -30px;
+  left: 22px;
+}
+
+.cloud::after {
+  width: 84px;
+  height: 84px;
+  top: -44px;
+  left: 62px;
+}
+
+.cloud--1 { top: 10%; animation-duration: 80s; animation-delay: -30s; }
+.cloud--2 { top: 38%; animation-duration: 110s; animation-delay: -70s; transform: scale(0.8); opacity: 0.55; }
+.cloud--3 { top: 72%; animation-duration: 95s; animation-delay: -10s; transform: scale(1.2); opacity: 0.6; }
+
+@keyframes cloud-drift {
+  from { left: -220px; }
+  to   { left: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud { animation: none; left: 12%; }
+  .cloud--2 { left: 70%; }
+  .cloud--3 { left: 30%; }
+}
+
+/* ---------- Tombol kembali ke beranda ---------- */
+.btn-back {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  font-family: var(--font-ui);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+  background: #fff;
+  border: 3px solid #38bdf8;
+  border-radius: 999px;
+  box-shadow: 0 6px 14px rgba(3, 105, 161, 0.2);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-back:hover { transform: translateX(-2px); background: #f0f9ff; }
+.btn-back:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+
+/* ---------- Tombol musik latar (dibuat oleh backsound.js) ---------- */
+.btn-sound {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 50;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  background: #fff;
+  border: 3px solid #38bdf8;
+  border-radius: 50%;
+  box-shadow: 0 6px 14px rgba(3, 105, 161, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.btn-sound:hover { transform: scale(1.08); }
+.btn-sound:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+
+/* Beri ruang di judul supaya tidak tertimpa tombol di layar sempit */
+@media (max-width: 700px) {
+  body .page-header { padding-top: 66px; }
+}

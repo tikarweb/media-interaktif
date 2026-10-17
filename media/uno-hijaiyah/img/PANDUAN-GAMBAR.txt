@@ -1,0 +1,9 @@
+PANDUAN GAMBAR — HarakaPlay
+===========================
+Latar permainan (opsional):
+  Simpan gambar dengan nama  latar.jpg  di folder ini (img/).
+  Otomatis tampil di belakang hiasan oval. Disarankan 1920x1080,
+  warna cerah dan tidak ramai agar kartu tetap jelas.
+  Mau nama/format lain? Buka css/layout.css, cari  --bg-image
+  lalu ganti url('../img/latar.jpg').
+(Kalau latar.jpg belum ada, tampil latar merah Uno. Tidak error.)

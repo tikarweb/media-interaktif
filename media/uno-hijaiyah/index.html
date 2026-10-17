@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HarakaPlay — Uno Hijaiyah</title>
+  <link rel="stylesheet" href="../../assets/css/fonts.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="css/cards.css">
+  <link rel="stylesheet" href="css/layout.css">
+</head>
+<body class="hp-body">
+  <div class="page-bg page-bg--uno" aria-hidden="true">
+    <span class="hp-oval hp-oval--1"></span><span class="hp-oval hp-oval--2"></span>
+    <span class="hp-oval hp-oval--3"></span><span class="hp-oval hp-oval--4"></span>
+  </div>
+
+  <a class="btn-back" href="../../index.html">← Beranda</a>
+  <button type="button" class="hp-btn hp-btn--small hp-btn--dark hp-exit" id="btn-exit">✕ Keluar</button>
+
+  <main class="hp-app">
+
+    <!-- MENU -->
+    <section class="hp-screen hp-screen--center is-active" id="screen-menu">
+      <h1 class="hp-logo"><span class="l1">Haraka</span><span class="l3">Play</span></h1>
+      <p class="hp-tagline">Main kartu Uno sambil melatih membaca huruf hijaiyah dengan harakat.</p>
+      <div class="hp-fan" id="menu-fan" aria-hidden="true"></div>
+      <div class="hp-menu">
+        <button type="button" class="hp-btn hp-btn--green" id="btn-practice">🤖 Latihan dengan Bot</button>
+        <button type="button" class="hp-btn hp-btn--blue" id="btn-online">🌐 Main Online <span class="hp-badge">2–4 pemain</span></button>
+        <button type="button" class="hp-btn hp-btn--yellow" id="btn-rules">📖 Aturan</button>
+      </div>
+    </section>
+
+    <!-- PENGATURAN LATIHAN -->
+    <section class="hp-screen hp-screen--center" id="screen-setup">
+      <div class="hp-panel">
+        <h2>Latihan dengan Bot</h2>
+        <label class="hp-field"><span>Namamu</span>
+          <input class="hp-input" id="player-name" maxlength="14" placeholder="Kamu" autocomplete="off">
+        </label>
+        <div class="hp-field"><span>Jumlah bot</span>
+          <div class="hp-chips">
+            <button type="button" class="hp-chip" data-bots="1" aria-pressed="true">1</button>
+            <button type="button" class="hp-chip" data-bots="2" aria-pressed="false">2</button>
+            <button type="button" class="hp-chip" data-bots="3" aria-pressed="false">3</button>
+          </div>
+        </div>
+        <div class="hp-actions">
+          <button type="button" class="hp-btn hp-btn--ghost hp-btn--small" id="btn-setup-back" style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Kembali</button>
+          <button type="button" class="hp-btn hp-btn--red" id="btn-start">Mulai!</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ONLINE: buat / gabung ruangan -->
+    <section class="hp-screen hp-screen--center" id="screen-online">
+      <div class="hp-panel">
+        <h2>Main Online</h2>
+        <label class="hp-field"><span>Namamu</span>
+          <input class="hp-input" id="online-name" maxlength="14" placeholder="Pemain" autocomplete="off">
+        </label>
+        <div class="hp-actions hp-actions--stack">
+          <button type="button" class="hp-btn hp-btn--green" id="btn-create-room">➕ Buat ruangan baru</button>
+        </div>
+        <div class="hp-or"><span>atau gabung</span></div>
+        <label class="hp-field"><span>Kode ruangan</span>
+          <input class="hp-input hp-input--code" id="online-code" maxlength="5" placeholder="ABCDE" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        </label>
+        <div class="hp-actions hp-actions--stack">
+          <button type="button" class="hp-btn hp-btn--blue" id="btn-join-room">Gabung</button>
+        </div>
+        <p class="hp-msg" id="online-msg" hidden role="alert"></p>
+        <div class="hp-resume" id="resume-box" hidden>
+          <span>Ruangan terakhir: <b id="resume-code"></b></span>
+          <button type="button" class="hp-btn hp-btn--small hp-btn--yellow" id="btn-resume">Lanjutkan</button>
+          <button type="button" class="hp-link" id="btn-forget-room">lupakan</button>
+        </div>
+        <div class="hp-actions">
+          <button type="button" class="hp-btn hp-btn--small" id="btn-online-back" style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Kembali</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOBI -->
+    <section class="hp-screen hp-screen--center" id="screen-lobby">
+      <div class="hp-panel">
+        <h2>Ruang Tunggu</h2>
+        <p class="hp-lobby-label">Kode ruangan</p>
+        <div class="hp-code" id="lobby-code">-----</div>
+        <div class="hp-actions"><button type="button" class="hp-btn hp-btn--small hp-btn--yellow" id="btn-copy-code">📋 Salin tautan undangan</button></div>
+        <ul class="hp-players" id="lobby-players"></ul>
+        <p class="hp-hint" id="lobby-hint"></p>
+        <div class="hp-actions">
+          <button type="button" class="hp-btn hp-btn--small" id="btn-lobby-leave" style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Keluar</button>
+          <button type="button" class="hp-btn hp-btn--red" id="btn-lobby-start">Mulai!</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERMAINAN -->
+    <section class="hp-screen hp-game" id="screen-game">
+      <div class="hp-opponents" id="opponents"></div>
+
+      <div class="hp-table">
+        <div class="hp-piles">
+          <div class="hp-pile">
+            <button type="button" class="hp-pile__btn" id="draw-pile-btn" aria-label="Ambil kartu">
+              <span id="draw-pile-card"></span>
+              <span id="draw-count">0</span>
+            </button>
+            <span class="hp-pile__label">Ambil</span>
+          </div>
+          <div class="hp-pile">
+            <span id="discard-card"></span>
+            <span class="hp-pile__label">Buangan</span>
+          </div>
+        </div>
+        <div class="hp-active">
+          <span class="hp-chipinfo"><span class="hp-swatch" id="active-color"></span>
+            <span><small>Warna aktif</small><span class="val" id="active-color-name">-</span></span></span>
+          <span class="hp-chipinfo"><span class="hp-harakmark" id="active-haraka-mark">-</span>
+            <span><small>Harakat aktif</small><span class="val" id="active-haraka-name">-</span></span></span>
+        </div>
+        <p class="hp-say" id="say-syllable" hidden></p>
+      </div>
+
+      <div class="hp-bottom">
+        <div class="hp-bar">
+          <span class="hp-turn" id="turn-banner">…</span>
+          <button type="button" class="hp-btn hp-btn--small hp-btn--yellow" id="draw-btn">Ambil kartu</button>
+          <button type="button" class="hp-btn hp-btn--small hp-btn--dark" id="pass-btn" hidden>Lewati</button>
+        </div>
+        <div class="hp-meta"><span id="hand-count"></span><span id="score-brief"></span></div>
+        <div class="hp-hand" id="hand"></div>
+      </div>
+
+      <div class="hp-corner hp-corner--br">
+        <button type="button" class="hp-roundbtn" id="btn-rules-game" aria-label="Aturan">?</button>
+      </div>
+    </section>
+
+    <!-- HASIL -->
+    <section class="hp-screen hp-screen--center" id="screen-result">
+      <div class="hp-trophy" id="result-trophy">🏆</div>
+      <h2 class="hp-result-title" id="result-title"></h2>
+      <p class="hp-result-sub" id="result-sub"></p>
+      <div class="hp-panel">
+        <table class="hp-table-score">
+          <thead><tr><th>Pemain</th><th>Sisa kartu</th><th>Total skor</th></tr></thead>
+          <tbody id="result-rows"></tbody>
+        </table>
+        <div class="hp-actions">
+          <button type="button" class="hp-btn hp-btn--green" id="btn-again">Main Lagi</button>
+          <button type="button" class="hp-btn hp-btn--blue" id="btn-home">Menu Utama</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="hp-toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Aturan -->
+  <div class="hp-modal" id="modal-rules" hidden>
+    <div class="hp-modal__panel" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+      <h2 id="rules-title">Aturan Main</h2>
+      <h3>Tujuan</h3>
+      <p>Jadilah pemain pertama yang kartunya habis. Sambil main, bacalah huruf dengan harakatnya, misalnya <span class="ar">بَ</span> = <b>ba</b>, <span class="ar">بِ</span> = <b>bi</b>, <span class="ar">بُ</span> = <b>bu</b>.</p>
+      <h3>Kartu</h3>
+      <ul>
+        <li>Huruf <span class="ar">ب ت ث ج ح</span> dengan harakat fathah, kasrah, dammah, dalam 4 warna.</li>
+        <li>Kartu khusus: <b>Ambil 1</b>, <b>Ganti Harakat</b>, <b>Ganti Warna</b>.</li>
+      </ul>
+      <h3>Kartu apa yang boleh dimainkan?</h3>
+      <p>Kartu cocok jika <b>warnanya sama</b> atau <b>harakatnya sama</b> dengan warna/harakat aktif. Huruf yang sama saja tidak cukup. Contoh: kartu teratas <span class="ar">بَ</span> merah, maka kamu boleh memainkan kartu merah apa pun, atau kartu berharakat fathah warna apa pun.</p>
+      <h3>Kartu khusus</h3>
+      <ul>
+        <li><b>Ambil 1</b>: pemain berikutnya mengambil 1 kartu dan kehilangan giliran. Tidak bisa ditumpuk. Cocok berdasarkan warna.</li>
+        <li><b>Ganti Harakat</b>: kamu memilih harakat baru; warna mengikuti kartu itu. Cocok berdasarkan warna.</li>
+        <li><b>Ganti Warna</b>: bisa dimainkan kapan saja; kamu memilih warna baru, harakat tidak berubah.</li>
+      </ul>
+      <h3>Tidak punya kartu cocok?</h3>
+      <p>Ambil 1 kartu. Jika kartu itu cocok, boleh langsung dimainkan; jika tidak, giliran berpindah.</p>
+      <h3>Skor</h3>
+      <p>Pemenang mendapat jumlah nilai kartu sisa lawan: kartu biasa 1 poin, kartu khusus 10 poin. Contoh: sisa 3 kartu biasa + 2 kartu khusus = 23 poin.</p>
+      <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--red hp-btn--small" data-close="modal-rules" data-autofocus>Mengerti</button></div>
+    </div>
+  </div>
+
+  <!-- Online belum aktif -->
+  <div class="hp-modal" id="modal-online" hidden>
+    <div class="hp-modal__panel hp-modal__panel--small">
+      <h2>Main Online</h2>
+      <p>Mode online (2–4 pemain lewat internet) belum aktif. Untuk sekarang, berlatihlah dengan bot dulu ya.</p>
+      <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--blue hp-btn--small" data-close="modal-online" data-autofocus>OK</button></div>
+    </div>
+  </div>
+
+  <!-- Pilih harakat -->
+  <div class="hp-modal" id="modal-haraka" hidden>
+    <div class="hp-modal__panel hp-modal__panel--small">
+      <h2>Pilih harakat</h2>
+      <div class="hp-choices" id="haraka-options"></div>
+      <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--ghost hp-btn--small" data-cancel style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Batal</button></div>
+    </div>
+  </div>
+
+  <!-- Pilih warna -->
+  <div class="hp-modal" id="modal-color" hidden>
+    <div class="hp-modal__panel hp-modal__panel--small">
+      <h2>Pilih warna</h2>
+      <div class="hp-choices" id="color-options"></div>
+      <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--ghost hp-btn--small" data-cancel style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Batal</button></div>
+    </div>
+  </div>
+
+  <!-- Konfirmasi -->
+  <div class="hp-modal" id="modal-confirm" hidden>
+    <div class="hp-modal__panel hp-modal__panel--small">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-text"></p>
+      <div class="hp-modal__actions">
+        <button type="button" class="hp-btn hp-btn--ghost hp-btn--small" id="confirm-no" style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Batal</button>
+        <button type="button" class="hp-btn hp-btn--red hp-btn--small" id="confirm-yes">Ya</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/game/deck.js"></script>
+  <script src="js/game/turn-manager.js"></script>
+  <script src="js/game/scoring.js"></script>
+  <script src="js/game/rules.js"></script>
+  <script src="js/game/game-state.js"></script>
+  <script src="js/game/bot.js"></script>
+  <script src="js/ui/render-cards.js"></script>
+  <script src="js/ui/dialogs.js"></script>
+  <script src="js/ui/render-players.js"></script>
+  <script src="js/ui/app.js"></script>
+  <script src="js/net/supabase.js"></script>
+  <script src="js/net/online-config.js"></script>
+  <script src="js/net/online-client.js"></script>
+  <script src="js/ui/online-ui.js"></script>
+  <script>
+    // Kipas kartu hiasan di menu
+    document.addEventListener('DOMContentLoaded', function () {
+      var fan = document.getElementById('menu-fan');
+      var C = HarakaPlay.renderCards;
+      [{id:'a',type:'normal',color:'red',letter:'ba',haraka:'fathah'},
+       {id:'b',type:'normal',color:'yellow',letter:'ta',haraka:'kasrah'},
+       {id:'c',type:'normal',color:'green',letter:'jim',haraka:'dammah'},
+       {id:'d',type:'normal',color:'blue',letter:'tsa',haraka:'fathah'}
+      ].forEach(function (c) { fan.appendChild(C.createCardEl(c, { static: true })); });
+    });
+  </script>
+  <script src="../../assets/js/backsound.js" data-src="audio/backsound.mp3" data-volume="0.35"></script>
+</body>
+</html>

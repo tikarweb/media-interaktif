@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Interaktif Bahasa Arab</title>
+    <link rel="stylesheet" href="assets/css/fonts.css">
+
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/home.css">
+</head>
+
+<body>
+    <!-- Latar beranda: langit + awan -->
+    <div class="page-bg" aria-hidden="true">
+        <span class="cloud cloud--1"></span>
+        <span class="cloud cloud--2"></span>
+        <span class="cloud cloud--3"></span>
+    </div>
+
+    <main class="home">
+        <header class="home-head">
+            <h1>
+                <span class="home-ar">وَسَائِلُ تَفَاعُلِيَّة</span>
+                <span class="home-title">Media Interaktif Bahasa Arab</span>
+            </h1>
+            <p class="home-lead">Pilih media yang ingin dimainkan</p>
+        </header>
+
+        <!-- Kartu dibuat otomatis dari media-list.js -->
+        <section class="grid" id="mediaGrid" aria-label="Daftar media"></section>
+    </main>
+
+    <script src="media-list.js"></script>
+    <script>
+        const STATUS_LABEL = { ready: 'Siap dimainkan', draft: 'Dalam pembuatan', soon: 'Segera hadir' };
+        const grid = document.getElementById('mediaGrid');
+
+        MEDIA_LIST.forEach(function (m, i) {
+            const isLink = m.href && m.status !== 'soon';
+            const card = document.createElement(isLink ? 'a' : 'div');
+            card.className = 'card' + (m.status === 'soon' ? ' card--soon' : '');
+            if (isLink) card.href = m.href;
+
+            const parts = [];
+            parts.push('<span class="card-num">' + (i + 1) + '</span>');
+            parts.push('<div class="card-emoji">' + m.emoji + '</div>');
+            if (m.ar) parts.push('<div class="card-ar">' + m.ar + '</div>');
+            parts.push('<h2 class="card-name">' + m.title + '</h2>');
+            parts.push('<p class="card-desc">' + m.desc + '</p>');
+            parts.push('<span class="card-tag tag--' + m.status + '">' + STATUS_LABEL[m.status] + '</span>');
+            card.innerHTML = parts.join('');
+
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+
+</html>
