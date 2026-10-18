@@ -1,0 +1,5 @@
+AUDIO KATA UTUH — HarakaPlay (Haraka Iqlab)
+===========================================
+Simpan di folder ini dengan nama:  <id kata>.mp3   (mis. jalasa.mp3, kataba.mp3)
+Dibunyikan saat satu kata selesai dirangkai. Daftar siap-centang: audio/CEKLIS-AUDIO.md
+Setelah menambah file, jalankan:  node scripts/scan-audio.js

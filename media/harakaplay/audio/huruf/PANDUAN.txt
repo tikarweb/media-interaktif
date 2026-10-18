@@ -1,0 +1,10 @@
+AUDIO SUKU KATA — HarakaPlay
+============================
+Simpan rekaman di folder ini dengan nama:  <kode huruf>-<harakat>.mp3
+Contoh: ja-fathah.mp3, ja-kasrah.mp3, ba-dammah.mp3, da-fathatain.mp3
+
+PENTING: kode huruf bisa beda dari nama huruf. Daftar lengkap & siap-centang ada di
+  audio/CEKLIS-AUDIO.md   (dibuat otomatis: node scripts/make-audio-checklist.js)
+
+Setelah menambah file, jalankan sekali:  node scripts/scan-audio.js
+supaya game mengenali file baru. File yang belum ada dilewati tanpa error.
