@@ -17,6 +17,12 @@
    - Musik berhenti sementara saat tab ditinggalkan.
    - Kalau file musiknya belum ada, tombolnya tidak ditampilkan
      dan halaman tetap berjalan normal.
+
+   Ducking (opsional, untuk media yang punya suara lain):
+     window.Backsound && window.Backsound.duck(1000);
+   Volume musik turun halus ke 0.1 selama ±1 detik (atau lebih lama
+   bila diberi angka milidetik), lalu naik halus kembali. Aman dipanggil
+   berulang; kalau musik mati / tidak ada, tidak terjadi apa-apa.
    ===================================================== */
 
 (function () {
@@ -88,6 +94,31 @@
   audio.addEventListener('error', function () {
     if (btn.parentNode) btn.parentNode.removeChild(btn);
   });
+
+  /* ---- Ducking: turunkan volume sementara saat ada suara lain ---- */
+  var DUCK_LEVEL = 0.1;
+  var fadeTimer = null, holdTimer = null;
+
+  function fadeTo(target, ms) {
+    clearInterval(fadeTimer);
+    var from = audio.volume, steps = Math.max(1, Math.round(ms / 30)), i = 0;
+    fadeTimer = setInterval(function () {
+      i++;
+      var v = from + (target - from) * (i / steps);
+      try { audio.volume = Math.min(1, Math.max(0, v)); } catch (e) {}
+      if (i >= steps) clearInterval(fadeTimer);
+    }, 30);
+  }
+
+  function duck(holdMs) {
+    if (isNaN(holdMs) || holdMs == null) holdMs = 1000;
+    var low = Math.min(DUCK_LEVEL, volume);
+    fadeTo(low, 150);
+    clearTimeout(holdTimer);
+    holdTimer = setTimeout(function () { fadeTo(volume, 400); }, holdMs);
+  }
+
+  window.Backsound = { duck: duck };
 
   render();
 })();
