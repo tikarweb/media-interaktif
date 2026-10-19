@@ -77,19 +77,35 @@
     var box = $('result-words');
     if (!done || !done.length) { box.hidden = true; return; }
     box.hidden = false;
+    var note = $('result-words-note');
+    if (!note) {
+      note = document.createElement('p');
+      note.id = 'result-words-note';
+      note.className = 'hp-rw__note';
+      box.insertBefore(note, $('result-words-list'));
+    }
+    note.textContent = 'Lencana \ud83c\udfc5 di kanan = pemain yang merangkai kata itu (bukan bagian dari arti).';
     var ul = $('result-words-list');
     ul.innerHTML = '';
     done.forEach(function (d) {
       var w = config.wordById[d.wordId];
       if (!w) return;
+      var who = d.by === meId ? 'kamu' : (names[d.by] || 'Pemain');
       var li = document.createElement('li');
+      li.className = 'hp-rw';
       var ar = document.createElement('span');
-      ar.className = 'ar';
+      ar.className = 'ar hp-rw__ar';
       ar.textContent = w.arab;
-      var txt = document.createElement('span');
-      txt.textContent = ' = ' + w.arti + '  (' + (d.by === meId ? 'kamu' : (names[d.by] || 'Pemain')) + ')';
+      var arti = document.createElement('span');
+      arti.className = 'hp-rw__arti';
+      arti.textContent = w.arti;
+      var by = document.createElement('span');
+      by.className = 'hp-rw__by' + (d.by === meId ? ' is-me' : '');
+      by.textContent = '\ud83c\udfc5 ' + who;
+      by.title = 'Dirangkai oleh ' + who;
       li.appendChild(ar);
-      li.appendChild(txt);
+      li.appendChild(arti);
+      li.appendChild(by);
       ul.appendChild(li);
     });
   }
