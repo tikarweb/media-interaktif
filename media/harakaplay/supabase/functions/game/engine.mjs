@@ -1,6 +1,89 @@
 // FILE HASIL BUILD — jangan diedit. Sumber: js/config.js dan js/game/*.js
 // Bangun ulang dengan: node scripts/build-engine.js
 const REG = {};
+REG["kata"] = (function () {
+  const module = { exports: {} };
+  const require = (p) => REG[p.split('/').pop()];
+  (function () {
+/* =====================================================
+   KATA.JS — DATABASE KOSAKATA (Mode Haraka Iqlab: Rangkai Kata)
+   File ini khusus untuk kamu review & edit. Tidak perlu mengubah
+   file lain: suku kata dipecah OTOMATIS dari tulisan Arab-nya.
+
+   Format satu kata:
+     { id: 'jalasa', arab: 'جَلَسَ', arti: 'duduk', latin: 'jalasa' }
+
+     id    : nama unik (huruf kecil, tanpa spasi). Juga nama file audio kata:
+             audio/kata/<id>.mp3   (contoh: audio/kata/jalasa.mp3)
+     arab  : kata LENGKAP DENGAN HARAKAT pada tiap huruf (3 huruf = 3 suku kata)
+     arti  : arti bahasa Indonesia (muncul saat kata selesai dirangkai)
+     latin : cara baca (hanya untuk referensimu; Mode Iqlab tidak menampilkannya)
+
+   Aturan agar kata bisa dipakai:
+     - Tiap huruf harus ada harakat (fathah/kasrah/dammah) dan termasuk
+       huruf di js/config.js (28 huruf + hamzah ء). Hindari أ إ ئ ؤ ة ى.
+     - Huruf di dalam satu kata tidak boleh sama (supaya slot tidak ambigu).
+     - Tanpa syaddah/sukun/tanwin dulu.
+     (Pemeriksaan otomatis: jalankan  node --test  — akan gagal dan memberi
+      tahu kata mana yang bermasalah.)
+
+   PAKET = satu "level" di Mode Iqlab. Tiap paket berisi 5 id kata.
+   Menambah paket / kata: tambahkan baris, lalu (jika memakai mode online)
+   jalankan  node scripts/build-engine.js  dan deploy ulang fungsi "game".
+   ===================================================== */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    var HP = (root.HarakaPlay = root.HarakaPlay || {});
+    HP.kataData = factory();
+  }
+}(this, function () {
+  'use strict';
+
+  // ---- 20 fi'il madhi (kata kerja lampau) 3 huruf, harakat dasar ----
+  var KATA = [
+    // (Pengelompokan ke paket ada di PAKET di bawah)
+    { id: 'kataba',  arab: 'كَتَبَ',  arti: 'menulis',        latin: 'kataba'  },
+    { id: 'jalasa',  arab: 'جَلَسَ',  arti: 'duduk',          latin: 'jalasa'  },
+    { id: 'dzahaba', arab: 'ذَهَبَ',  arti: 'pergi',          latin: 'dzahaba' },
+    { id: 'dakhala', arab: 'دَخَلَ',  arti: 'masuk',          latin: 'dakhala' },
+    { id: 'kharaja', arab: 'خَرَجَ',  arti: 'keluar',         latin: 'kharaja' },
+
+    { id: 'nazala',  arab: 'نَزَلَ',  arti: 'turun',          latin: 'nazala'  },
+    { id: 'fataha',  arab: 'فَتَحَ',  arti: 'membuka',        latin: 'fataha'  },
+    { id: 'rajaa', arab: 'رَجَعَ', arti: 'kembali, pulang', latin: 'raja’a' },
+    { id: 'hamala',  arab: 'حَمَلَ',  arti: 'membawa',        latin: 'hamala'  },
+    { id: 'faala', arab: 'فَعَلَ', arti: 'melakukan',    latin: 'fa’ala' },
+
+    { id: 'samia', arab: 'سَمِعَ', arti: 'mendengar',    latin: 'sami’a' },
+    { id: 'syariba', arab: 'شَرِبَ',  arti: 'minum',          latin: 'syariba' },
+    { id: 'fahima',  arab: 'فَهِمَ',  arti: 'memahami',       latin: 'fahima'  },
+    { id: 'alima', arab: 'عَلِمَ', arti: 'mengetahui',   latin: '’alima' },
+    { id: 'laiba', arab: 'لَعِبَ', arti: 'bermain',      latin: 'la’iba' },
+
+    { id: 'nashara', arab: 'نَصَرَ',  arti: 'menolong',       latin: 'nashara' },
+    { id: 'dharaba', arab: 'ضَرَبَ',  arti: 'memukul',        latin: 'dharaba' },
+    { id: 'rakiba',  arab: 'رَكِبَ',  arti: 'menaiki, naik',  latin: 'rakiba'  },
+    { id: 'kabura',  arab: 'كَبُرَ',  arti: 'menjadi besar',  latin: 'kabura'  },
+    { id: 'hasuna',  arab: 'حَسُنَ',  arti: 'menjadi baik, bagus', latin: 'hasuna' }
+  ];
+
+  // Tiap paket sengaja memuat campuran harakat (fathah + kasrah/dammah) supaya aturan
+  // "cocok warna ATAU harakat" tetap bermakna.
+  var PAKET = [
+    { id: 'p1', judul: 'Aktivitas harian',   kata: ['kataba', 'jalasa', 'dakhala', 'kharaja', 'syariba'] },
+    { id: 'p2', judul: 'Gerak & kerja',      kata: ['nazala', 'fataha', 'rajaa', 'hamala', 'rakiba'] },
+    { id: 'p3', judul: 'Indra, ilmu & sifat', kata: ['samia', 'fahima', 'alima', 'laiba', 'kabura'] },
+    { id: 'p4', judul: 'Aksi & sifat',       kata: ['dzahaba', 'nashara', 'dharaba', 'faala', 'hasuna'] }
+  ];
+
+  return { KATA: KATA, PAKET: PAKET };
+}));
+
+  }).call({});
+  return module.exports;
+})();
 REG["config"] = (function () {
   const module = { exports: {} };
   const require = (p) => REG[p.split('/').pop()];
@@ -16,12 +99,12 @@ REG["config"] = (function () {
    ===================================================== */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory();
+    module.exports = factory(require('./data/kata'));
   } else {
     var HP = (root.HarakaPlay = root.HarakaPlay || {});
-    HP.config = factory();
+    HP.config = factory(HP.kataData);      // js/data/kata.js harus dimuat lebih dulu
   }
-}(this, function () {
+}(this, function (kataData) {
   'use strict';
 
   // Urutan warna juga dipakai untuk mengurutkan kartu di tangan
@@ -32,28 +115,155 @@ REG["config"] = (function () {
     { id: 'blue',   name: 'Biru',   hex: '#1d6fd1' }
   ];
 
-  // Harakat (Unicode: fathah U+064E, kasrah U+0650, dammah U+064F)
+  // Harakat (Unicode: fathah U+064E, kasrah U+0650, dammah U+064F,
+  // tanwin: fathatain U+064B, dammatain U+064C, kasratain U+064D)
   var HARAKAT = [
-    { id: 'fathah', mark: 'َ', name: 'Fathah', vowel: 'a' },
-    { id: 'kasrah', mark: 'ِ', name: 'Kasrah', vowel: 'i' },
-    { id: 'dammah', mark: 'ُ', name: 'Dammah', vowel: 'u' }
+    { id: 'fathah',   mark: '\u064E', name: 'Fathah',    vowel: 'a'  },
+    { id: 'kasrah',   mark: '\u0650', name: 'Kasrah',    vowel: 'i'  },
+    { id: 'dammah',   mark: '\u064F', name: 'Dammah',    vowel: 'u'  },
+    { id: 'fathatain', mark: '\u064B', name: 'Fathatain', vowel: 'an' },
+    { id: 'kasratain', mark: '\u064D', name: 'Kasratain', vowel: 'in' },
+    { id: 'dammatain', mark: '\u064C', name: 'Dammatain', vowel: 'un' }
+  ];
+  var BASIC = ['fathah', 'kasrah', 'dammah'];
+  var TANWIN = ['fathatain', 'kasratain', 'dammatain'];
+
+  // Seluruh 28 huruf hijaiyah. "latin" = cara baca (tanpa vokal).
+  var LETTERS = [
+    { id: 'alif',    ch: '\u0627', latin: ''   },
+    { id: 'ba',      ch: '\u0628', latin: 'b'  },
+    { id: 'ta',      ch: '\u062A', latin: 't'  },
+    { id: 'tsa',     ch: '\u062B', latin: 'ts' },
+    { id: 'jim',     ch: '\u062C', latin: 'j'  },
+    { id: 'ha',      ch: '\u062D', latin: 'h'  },
+    { id: 'kha',     ch: '\u062E', latin: 'kh' },
+    { id: 'dal',     ch: '\u062F', latin: 'd'  },
+    { id: 'dzal',    ch: '\u0630', latin: 'dz' },
+    { id: 'ra',      ch: '\u0631', latin: 'r'  },
+    { id: 'zay',     ch: '\u0632', latin: 'z'  },
+    { id: 'sin',     ch: '\u0633', latin: 's'  },
+    { id: 'syin',    ch: '\u0634', latin: 'sy' },
+    { id: 'shad',    ch: '\u0635', latin: 'sh' },
+    { id: 'dhad',    ch: '\u0636', latin: 'dl' },
+    { id: 'tha',     ch: '\u0637', latin: 'th' },
+    { id: 'zha',     ch: '\u0638', latin: 'zh' },
+    { id: 'ain',     ch: '\u0639', latin: "'"  },
+    { id: 'ghain',   ch: '\u063A', latin: 'gh' },
+    { id: 'fa',      ch: '\u0641', latin: 'f'  },
+    { id: 'qaf',     ch: '\u0642', latin: 'q'  },
+    { id: 'kaf',     ch: '\u0643', latin: 'k'  },
+    { id: 'lam',     ch: '\u0644', latin: 'l'  },
+    { id: 'mim',     ch: '\u0645', latin: 'm'  },
+    { id: 'nun',     ch: '\u0646', latin: 'n'  },
+    { id: 'hah',     ch: '\u0647', latin: 'h'  },
+    { id: 'waw',     ch: '\u0648', latin: 'w'  },
+    { id: 'ya',      ch: '\u064A', latin: 'y'  },
+    { id: 'hamzah',  ch: '\u0621', latin: "'"  }
   ];
 
-  // Huruf hijaiyah di dalam permainan. Untuk menambah huruf, tambahkan baris
-  // baru di sini — jumlah kartu menyesuaikan otomatis (huruf x 3 harakat x 4 warna).
-  // Catatan: spesifikasi awal memakai 5 huruf (total 72 kartu).
-  var LETTERS = [
-    { id: 'ba',  ch: 'ب', latin: 'b'  },   // ب
-    { id: 'ta',  ch: 'ت', latin: 't'  },   // ت
-    { id: 'tsa', ch: 'ث', latin: 'ts' },   // ث
-    { id: 'jim', ch: 'ج', latin: 'j'  },   // ج
-    { id: 'ha',  ch: 'ح', latin: 'h'  }    // ح
+  // Nama file audio per huruf (audio/huruf/<file>-<harakat>.mp3). Default = id huruf.
+  var AUDIO_FILE = { jim: 'ja', dal: 'da', dzal: 'dza', zay: 'za', sin: 'sa', syin: 'sya', shad: 'sha',
+                     dhad: 'dha', ghain: 'gha', qaf: 'qa', kaf: 'ka', lam: 'la', mim: 'ma', nun: 'na', waw: 'wa' };
+  LETTERS.forEach(function (l) { l.file = AUDIO_FILE[l.id] || l.id; });
+
+  // ===== LEVEL BELAJAR (Mode Haraka Asasi) =====
+  // Setiap level = daftar huruf + daftar harakat yang dipakai di dek.
+  // Jumlah kartu: huruf x harakat x 4 warna + 12 kartu khusus.
+  // Mau menambah level? Tambahkan satu baris di sini (lalu, bila memakai mode online:
+  //   node scripts/build-engine.js  dan deploy ulang fungsi "game").
+  var LEVELS = [
+    { id: 'l1', name: 'Level 1', title: 'Ba Ta Tsa Jim Ha',        letters: ['ba','ta','tsa','jim','ha'],        harakat: BASIC  },
+    { id: 'l2', name: 'Level 2', title: 'Kha Dal Dzal Ra Zay',     letters: ['kha','dal','dzal','ra','zay'],     harakat: BASIC  },
+    { id: 'l3', name: 'Level 3', title: 'Sin Syin Shad Dhad Tha',  letters: ['sin','syin','shad','dhad','tha'],  harakat: BASIC  },
+    { id: 'l4', name: 'Level 4', title: 'Zha Ain Ghain Fa Qaf',    letters: ['zha','ain','ghain','fa','qaf'],    harakat: BASIC  },
+    { id: 'l5', name: 'Level 5', title: 'Kaf Lam Mim Nun Ha',      letters: ['kaf','lam','mim','nun','hah'],     harakat: BASIC  },
+    { id: 'l6', name: 'Level 6', title: 'Waw Ya Alif Hamzah',      letters: ['waw','ya','alif','hamzah'],        harakat: BASIC  },
+    { id: 'l7', name: 'Level 7', title: 'Tanwin (an, in, un)',     letters: ['ba','ta','jim','dal','ra'],        harakat: TANWIN }
   ];
+
+  LEVELS.forEach(function (l) { l.mode = 'asasi'; });
+
+  // ===== PAKET KATA (Mode Haraka Iqlab: Rangkai Kata) =====
+  // Dibangun otomatis dari js/data/kata.js: tiap kata dipecah menjadi suku kata
+  // (huruf + harakat). Dek paket = suku kata unik x 4 warna + 12 kartu khusus.
+  var CHAR_TO_LETTER = {};
+  LETTERS.forEach(function (l) { CHAR_TO_LETTER[l.ch] = l; });
+  var MARK_TO_HARAKA = {};
+  HARAKAT.forEach(function (h) { MARK_TO_HARAKA[h.mark] = h; });
+
+  // "جَلَسَ" -> [{letter:'jim', haraka:'fathah', text:'جَ'}, ...]; huruf tak dikenal -> error jelas
+  function parseWord(arab) {
+    var syl = [], cur = null, i, ch;
+    for (i = 0; i < arab.length; i++) {
+      ch = arab.charAt(i);
+      if (CHAR_TO_LETTER[ch]) {
+        cur = { letter: CHAR_TO_LETTER[ch].id, haraka: null, text: ch };
+        syl.push(cur);
+      } else if (MARK_TO_HARAKA[ch] && cur && !cur.haraka) {
+        cur.haraka = MARK_TO_HARAKA[ch].id;
+        cur.text += ch;
+      } else {
+        throw new Error('Karakter tak dikenal di kata "' + arab + '" pada posisi ' + i + ' (U+' + ch.charCodeAt(0).toString(16) + ')');
+      }
+    }
+    syl.forEach(function (x) {
+      if (!x.haraka) throw new Error('Huruf tanpa harakat di kata "' + arab + '"');
+    });
+    return syl;
+  }
+
+  var WORDS = ((kataData && kataData.KATA) || []).map(function (w) {
+    return { id: w.id, arab: w.arab, arti: w.arti, latin: w.latin || '', syllables: parseWord(w.arab) };
+  });
+  var WORD_BY_ID = {};
+  WORDS.forEach(function (w) { WORD_BY_ID[w.id] = w; });
+
+  var PACKS = ((kataData && kataData.PAKET) || []).map(function (p, i) {
+    var seen = {}, syllables = [], letters = [], harakat = [];
+    p.kata.forEach(function (wid) {
+      var w = WORD_BY_ID[wid];
+      if (!w) throw new Error('Paket ' + p.id + ' merujuk kata yang tidak ada: ' + wid);
+      w.syllables.forEach(function (s) {
+        var key = s.letter + '|' + s.haraka;
+        if (!seen[key]) { seen[key] = true; syllables.push({ letter: s.letter, haraka: s.haraka }); }
+        if (letters.indexOf(s.letter) < 0) letters.push(s.letter);
+        if (harakat.indexOf(s.haraka) < 0) harakat.push(s.haraka);
+      });
+    });
+    return { id: p.id, mode: 'iqlab', name: 'Paket ' + (i + 1), title: p.judul,
+             words: p.kata.slice(), syllables: syllables, letters: letters, harakat: harakat };
+  });
+
+  // ===== TIGA MODE =====
+  var MODES = [
+    { id: 'asasi',  name: 'Haraka Asasi',  ar: 'أَسَاسِي', tag: 'Pemula',   desc: 'Huruf hijaiyah + harakat, dengan bantuan cara baca Latin',
+      showLatin: true,  available: true,  levels: LEVELS },
+    { id: 'iqlab',  name: 'Haraka Iqlab',  ar: 'إِقْلَاب', tag: 'Menengah', desc: 'Rangkai kata berharakat, tanpa bantuan Latin',
+      showLatin: false, available: true,  levels: PACKS },
+    { id: 'syadid', name: 'Haraka Syadid', ar: 'شَدِيد',   tag: 'Mahir',    desc: 'Arab gundul & kosakata tematik',
+      showLatin: false, available: false, levels: [] }
+  ];
+
+  // Istilah antarmuka (Arab + Indonesia). Ubah di sini bila perlu.
+  var UI = {
+    draw:   { ar: 'السَّحْب',   id: 'Ambil' },
+    turn:   { ar: 'نَوْبَة',    id: 'Giliran' },
+    waahid: { ar: 'وَاحِد !',   id: 'Waahid!' },
+    catch:  { ar: 'أَمْسِكْ !', id: 'Tangkap!' },
+    word:   { ar: 'الْكَلِمَة', id: 'Target Kata' }
+  };
 
   var CONFIG = {
     COLORS: COLORS,
     HARAKAT: HARAKAT,
     LETTERS: LETTERS,
+    LEVELS: LEVELS,
+    PACKS: PACKS,
+    WORDS: WORDS,
+    MODES: MODES,
+    UI: UI,
+    WAAHID_PENALTY: 2,      // kartu yang diambil jika lupa menekan Waahid dan tertangkap
+    WORD_BONUS_DRAW: 1,     // bonus menyelesaikan kata: pemain berikutnya ambil sekian kartu
     WILD_COUNT: 4,          // jumlah kartu Ganti Warna
     HAND_SIZE: 7,
     MIN_PLAYERS: 2,
@@ -69,6 +279,14 @@ REG["config"] = (function () {
   CONFIG.colorById = byId(COLORS);
   CONFIG.harakaById = byId(HARAKAT);
   CONFIG.letterById = byId(LETTERS);
+  CONFIG.levelById = byId(LEVELS.concat(PACKS));
+  CONFIG.wordById = WORD_BY_ID;
+  CONFIG.modeById = byId(MODES);
+
+  // Level yang valid; id tak dikenal / kosong jatuh ke Level 1
+  CONFIG.getLevel = function (id) { return CONFIG.levelById[id] || LEVELS[0]; };
+  CONFIG.getMode = function (id) { return CONFIG.modeById[id] || MODES[0]; };
+  CONFIG.modeOfLevel = function (id) { return CONFIG.getLevel(id).mode; };
 
   return CONFIG;
 }));
@@ -108,18 +326,27 @@ REG["deck"] = (function () {
   };
 
   // Setiap kartu: id unik, jenis, warna, dan (untuk kartu biasa) huruf + harakat
-  function createDeck() {
+  function createDeck(levelId) {
+    var level = config.getLevel(levelId);
     var cards = [];
+    // Daftar suku kata (huruf + harakat) di level ini:
+    //  - Asasi: semua huruf x semua harakat level
+    //  - Iqlab (paket kata): suku kata unik dari kata-kata paket
+    var syllables = level.syllables;
+    if (!syllables) {
+      syllables = [];
+      level.letters.forEach(function (letterId) {
+        level.harakat.forEach(function (harakaId) { syllables.push({ letter: letterId, haraka: harakaId }); });
+      });
+    }
     config.COLORS.forEach(function (color) {
-      config.LETTERS.forEach(function (letter) {
-        config.HARAKAT.forEach(function (h) {
-          cards.push({
-            id: 'n-' + color.id + '-' + letter.id + '-' + h.id,
-            type: TYPES.NORMAL,
-            color: color.id,
-            letter: letter.id,
-            haraka: h.id
-          });
+      syllables.forEach(function (sy) {
+        cards.push({
+          id: 'n-' + color.id + '-' + sy.letter + '-' + sy.haraka,
+          type: TYPES.NORMAL,
+          color: color.id,
+          letter: sy.letter,
+          haraka: sy.haraka
         });
       });
     });
@@ -284,8 +511,8 @@ REG["rules"] = (function () {
     return null;
   }
 
-  function isValidChoice(kind, value) {
-    if (kind === 'haraka') return !!config.harakaById[value];
+  function isValidChoice(kind, value, levelId) {
+    if (kind === 'haraka') return config.getLevel(levelId).harakat.indexOf(value) >= 0;
     if (kind === 'color') return !!config.colorById[value];
     return false;
   }
@@ -315,6 +542,9 @@ REG["game-state"] = (function () {
      { type: 'play', playerId, cardId, choice?, expectedVersion? }
      { type: 'draw', playerId, expectedVersion? }
      { type: 'pass', playerId, expectedVersion? }   // setelah mengambil kartu
+     { type: 'waahid', playerId }   // pemain yang kartunya tinggal 1 menekan "وَاحِد !"
+     { type: 'catch', playerId }    // lawan menangkap pemain yang lupa menekan Waahid
+   (waahid & catch boleh dilakukan di luar giliran, selama jendelanya terbuka)
    `choice` = id harakat (Ganti Harakat) atau id warna (Ganti Warna).
    `expectedVersion` melindungi dari dua aksi bersamaan: aksi kedua
    yang membawa versi lama ditolak ('stale_state').
@@ -348,7 +578,11 @@ REG["game-state"] = (function () {
     need_choice: 'Pilih dulu harakat atau warna barunya.',
     invalid_choice: 'Pilihan itu tidak valid.',
     already_drawn: 'Kamu sudah mengambil kartu di giliran ini.',
-    cannot_pass: 'Kamu hanya bisa melewati giliran setelah mengambil kartu.'
+    cannot_pass: 'Kamu hanya bisa melewati giliran setelah mengambil kartu.',
+    waahid_not_yet: 'Belum waktunya. Tekan "وَاحِد !" saat kartumu tinggal 1.',
+    waahid_late: 'Terlambat. Giliran sudah berlanjut.',
+    nothing_to_catch: 'Tidak ada yang bisa ditangkap sekarang.',
+    cannot_catch_self: 'Kamu tidak bisa menangkap dirimu sendiri.'
   };
 
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
@@ -359,8 +593,29 @@ REG["game-state"] = (function () {
     return r;
   }
 
+  /* ---------- Mode Iqlab: target kata ---------- */
+  // Ambil kata berikutnya dari antrean paket (diacak; tidak ada pengulangan sampai semua keluar)
+  function pickNextWord(s, rng) {
+    var level = config.getLevel(s.level);
+    if (!s.wordQueue || !s.wordQueue.length) {
+      var q = deck.shuffle(level.words, rng);
+      // hindari kata yang sama berturut-turut ketika antrean diisi ulang
+      if (s.target && q.length > 1 && q[q.length - 1] === s.target.wordId) {
+        var t = q[0]; q[0] = q[q.length - 1]; q[q.length - 1] = t;
+      }
+      s.wordQueue = q;
+    }
+    var wid = s.wordQueue.pop();
+    s.target = { wordId: wid, filled: config.wordById[wid].syllables.map(function () { return false; }) };
+  }
+
+  function sameSyllable(syl, card) {
+    return syl.letter === card.letter && syl.haraka === card.haraka;
+  }
+
   /* ---------- Membuat ronde baru ---------- */
-  // opts: { players: [{id, name, isBot}], rng?, scores?, round? }
+  // opts: { players: [{id, name, isBot}], rng?, scores?, round?, level? }
+  // level = id level Asasi ('l1'..'l7') atau paket Iqlab ('p1'..'p4'); menentukan mode.
   function createGame(opts) {
     var rng = opts.rng || Math.random;
     var list = opts.players || [];
@@ -378,7 +633,8 @@ REG["game-state"] = (function () {
       return { id: p.id, name: p.name, isBot: !!p.isBot, hand: [] };
     });
 
-    var pile = deck.shuffle(deck.createDeck(), rng);
+    var level = config.getLevel(opts.level);
+    var pile = deck.shuffle(deck.createDeck(level.id), rng);
 
     // Bagikan kartu
     for (var i = 0; i < config.HAND_SIZE; i++) {
@@ -400,9 +656,11 @@ REG["game-state"] = (function () {
       scores[p.id] = (opts.scores && opts.scores[p.id]) || 0;
     });
 
-    return {
+    var st = {
       version: 0,
       round: opts.round || 1,
+      level: level.id,
+      mode: level.mode,
       phase: 'playing',
       players: players,
       drawPile: pile,            // kartu teratas = elemen terakhir
@@ -413,8 +671,16 @@ REG["game-state"] = (function () {
       drawnCardId: null,         // kartu yang baru diambil dan boleh langsung dimainkan
       winnerId: null,
       roundScore: 0,
-      scores: scores
+      scores: scores,
+      waahidFor: null,           // pemain bertangan 1 kartu yang belum menekan Waahid (jendela tangkap terbuka)
+      target: null,              // Iqlab: { wordId, filled:[bool,...] }
+      wordQueue: [],
+      wordsDone: [],             // Iqlab: [{ wordId, by }] kata yang selesai di ronde ini
+      wordsBy: {}
     };
+    players.forEach(function (p) { st.wordsBy[p.id] = 0; });
+    if (level.mode === 'iqlab') pickNextWord(st, rng);
+    return st;
   }
 
   /* ---------- Bantuan ---------- */
@@ -454,6 +720,11 @@ REG["game-state"] = (function () {
 
     var idx = playerIndex(state, action.playerId);
     if (idx < 0) return reject(state, 'unknown_player');
+
+    // Waahid / Tangkap: boleh di luar giliran
+    if (action.type === 'waahid') return doWaahid(state, idx);
+    if (action.type === 'catch') return doCatch(state, idx, rng);
+
     if (idx !== state.turn) return reject(state, 'not_your_turn');
 
     if (action.type === 'play') return doPlay(state, action, idx, rng);
@@ -485,7 +756,7 @@ REG["game-state"] = (function () {
       if (action.choice === undefined || action.choice === null) {
         return reject(state, 'need_choice', { needs: kind });
       }
-      if (!rules.isValidChoice(kind, action.choice)) {
+      if (!rules.isValidChoice(kind, action.choice, state.level)) {
         return reject(state, 'invalid_choice', { needs: kind });
       }
     }
@@ -496,6 +767,7 @@ REG["game-state"] = (function () {
     var played = p.hand.splice(handPos, 1)[0];
     s.discardPile.push(played);
     s.drawnCardId = null;
+    s.waahidFor = null;       // aksi pemain berikutnya menutup jendela tangkap
     var events = [{ type: 'play', playerId: p.id, card: played, choice: action.choice || null }];
 
     // Warna & harakat aktif
@@ -509,6 +781,27 @@ REG["game-state"] = (function () {
       if (action.choice) s.activeHaraka = action.choice;
     } else if (played.type === T.CHANGE_COLOR) {
       if (action.choice) s.activeColor = action.choice;
+    }
+
+    // Iqlab: kartu yang dimainkan otomatis mengisi slot kata target (tidak harus berurutan)
+    var completedWord = null;
+    if (played.type === T.NORMAL && s.target) {
+      var word = config.wordById[s.target.wordId];
+      for (var k = 0; k < word.syllables.length; k++) {
+        if (!s.target.filled[k] && sameSyllable(word.syllables[k], played)) {
+          s.target.filled[k] = true;
+          events.push({ type: 'slot', playerId: p.id, wordId: word.id, index: k });
+          break;
+        }
+      }
+      if (s.target.filled.every(Boolean)) {
+        completedWord = word.id;
+        s.wordsDone.push({ wordId: word.id, by: p.id });
+        s.wordsBy[p.id] = (s.wordsBy[p.id] || 0) + 1;
+        events.push({ type: 'wordComplete', playerId: p.id, wordId: word.id });
+        pickNextWord(s, rng);                     // kata berikutnya otomatis
+        events.push({ type: 'newTarget', wordId: s.target.wordId });
+      }
     }
 
     // Kemenangan: tangan benar-benar kosong
@@ -536,14 +829,56 @@ REG["game-state"] = (function () {
       s.turn = turns.nextIndex(n, idx, 1);
     }
 
+    // Bonus menyelesaikan kata: pemain berikutnya mengambil kartu (tanpa kehilangan giliran)
+    if (completedWord) {
+      var bonusVictim = s.players[s.turn];
+      var got = 0;
+      for (var b = 0; b < config.WORD_BONUS_DRAW; b++) {
+        var bc = drawOne(s, rng);
+        if (bc) { bonusVictim.hand.push(bc); got++; }
+      }
+      events.push({ type: 'bonus', playerId: bonusVictim.id, count: got, wordId: completedWord });
+    }
+
+    // Tinggal 1 kartu: jendela "Waahid!" terbuka untuk pemain ini
+    if (p.hand.length === 1) s.waahidFor = p.id;
+
     s.version = state.version + 1;
     return { ok: true, state: s, events: events };
+  }
+
+  function doWaahid(state, idx) {
+    var me = state.players[idx];
+    if (state.waahidFor === me.id) {
+      var s = clone(state);
+      s.waahidFor = null;
+      s.version = state.version + 1;
+      return { ok: true, state: s, events: [{ type: 'waahid', playerId: me.id }] };
+    }
+    return reject(state, me.hand.length === 1 ? 'waahid_late' : 'waahid_not_yet');
+  }
+
+  function doCatch(state, idx, rng) {
+    var catcher = state.players[idx];
+    if (!state.waahidFor) return reject(state, 'nothing_to_catch');
+    if (state.waahidFor === catcher.id) return reject(state, 'cannot_catch_self');
+    var s = clone(state);
+    var victim = s.players[playerIndex(s, state.waahidFor)];
+    var got = 0;
+    for (var i = 0; i < config.WAAHID_PENALTY; i++) {
+      var c = drawOne(s, rng);
+      if (c) { victim.hand.push(c); got++; }
+    }
+    s.waahidFor = null;
+    s.version = state.version + 1;
+    return { ok: true, state: s, events: [{ type: 'caught', playerId: victim.id, byId: catcher.id, count: got }] };
   }
 
   function doDraw(state, idx, rng) {
     if (state.drawnCardId) return reject(state, 'already_drawn');
 
     var s = clone(state);
+    s.waahidFor = null;
     var p = s.players[idx];
     var card = drawOne(s, rng);
     var events = [];
@@ -571,6 +906,7 @@ REG["game-state"] = (function () {
     if (!state.drawnCardId) return reject(state, 'cannot_pass');
     var s = clone(state);
     s.drawnCardId = null;
+    s.waahidFor = null;
     s.turn = turns.nextIndex(s.players.length, idx, 1);
     s.version = state.version + 1;
     return { ok: true, state: s, events: [{ type: 'pass', playerId: s.players[idx].id }] };
@@ -583,6 +919,7 @@ REG["game-state"] = (function () {
     return {
       version: state.version,
       round: state.round,
+      level: state.level || config.LEVELS[0].id,
       phase: state.phase,
       me: me ? { id: me.id, name: me.name, hand: me.hand.slice() } : null,
       players: state.players.map(function (p) {
@@ -595,6 +932,11 @@ REG["game-state"] = (function () {
       activeColor: state.activeColor,
       activeHaraka: state.activeHaraka,
       drawnCardId: me && state.players[state.turn].id === me.id ? state.drawnCardId : null,
+      mode: state.mode || 'asasi',
+      waahidFor: state.waahidFor || null,
+      target: state.target ? { wordId: state.target.wordId, filled: state.target.filled.slice() } : null,
+      wordsDone: (state.wordsDone || []).slice(),
+      wordsBy: Object.assign({}, state.wordsBy || {}),
       winnerId: state.winnerId,
       roundScore: state.roundScore,
       scores: Object.assign({}, state.scores)

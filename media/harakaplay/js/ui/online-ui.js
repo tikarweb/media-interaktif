@@ -357,7 +357,7 @@
 
   /* ---------- Tombol layar Online & Lobi ---------- */
   function bind() {
-    HP.levelsUI.fillAll($('lobby-level'));
+    HP.levelsUI.fill($('lobby-level'));
     $('btn-create-room').addEventListener('click', createRoom);
     $('btn-join-room').addEventListener('click', joinRoom);
     $('btn-resume').addEventListener('click', resume);
@@ -370,10 +370,16 @@
 
     $('btn-lobby-start').addEventListener('click', async function () {
       if (!ctx || ctx.busy) return;
-      var r = await send({ action: 'start', level: $('lobby-level').value });
-      if (r.ok) HP.levelsUI.remember($('lobby-level').value);
+      var chosen = $('lobby-level').value;
+      var r = await send({ action: 'start', level: chosen });
+      if (r.ok) HP.levelsUI.remember(chosen);
       if (!r.ok) { dialogs.toast(r.message, 'warn'); return; }
-      refresh();
+      await refresh();
+      // Pengaman: bila server memulai level lain dari yang dipilih, wasit di server masih versi lama
+      var ps = ctx && ctx.snap && ctx.snap.room && ctx.snap.room.public_state;
+      if (ps && ps.level !== chosen) {
+        dialogs.toast('Server belum versi terbaru (level terpilih tidak diterima). Kirim ulang fungsi "game" ke Supabase.', 'warn');
+      }
     });
     $('btn-lobby-leave').addEventListener('click', async function () {
       if (!ctx) return;

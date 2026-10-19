@@ -49,6 +49,12 @@ export function createCore({ store, engine, random = Math.random }) {
     return {
       version: v.version,
       round: v.round,
+      level: v.level,
+      mode: v.mode,
+      waahidFor: v.waahidFor,
+      target: v.target,
+      wordsDone: v.wordsDone,
+      wordsBy: v.wordsBy,
       phase: v.phase,
       players: v.players.map((p) => ({ id: p.id, name: p.name, handCount: p.handCount })),
       turnPlayerId: v.turnPlayerId,
@@ -64,6 +70,10 @@ export function createCore({ store, engine, random = Math.random }) {
         const out = { type: e.type, playerId: e.playerId };
         if (e.type === 'play') out.card = e.card;          // kartu yang dimainkan memang terbuka
         if (e.type === 'win') out.roundScore = e.roundScore;
+        if (e.type === 'wordComplete' || e.type === 'slot' || e.type === 'bonus') out.wordId = e.wordId;
+        if (e.type === 'slot') out.index = e.index;
+        if (e.type === 'bonus' || e.type === 'caught') out.count = e.count;
+        if (e.type === 'caught') out.byId = e.byId;
         return out;                                          // kartu yang diambil TIDAK disertakan
       })
     };
@@ -145,6 +155,11 @@ export function createCore({ store, engine, random = Math.random }) {
     const { players } = await memberOf(room.id, userId);
     if (players.length < MIN_PLAYERS) return fail('too_few', 'Butuh minimal 2 pemain.');
 
+    let level = null;
+    if (req.level != null) {
+      level = String(req.level).slice(0, 20);
+      if (!engine.config.levelById[level]) return fail('bad_level', 'Level tidak dikenal.');
+    }
     let expected = null, scores = {}, round = 1;
     if (isNext) {
       if (room.status !== 'finished') return fail('not_finished', 'Ronde belum selesai.');
@@ -153,13 +168,14 @@ export function createCore({ store, engine, random = Math.random }) {
       expected = sec.version;
       scores = sec.state.scores || {};
       round = (sec.state.round || 1) + 1;
+      if (!level) level = sec.state.level || null;   // tanpa pilihan baru = ulangi level yang sama
     } else if (room.status !== 'lobby') {
       return fail('already_started', 'Permainan sudah dimulai.');
     }
 
     const ordered = players.slice().sort((a, b) => a.seat - b.seat)
       .map((p) => ({ id: p.user_id, name: p.name, isBot: false }));
-    const state = GS.createGame({ players: ordered, scores, round });
+    const state = GS.createGame({ players: ordered, scores, round, level });
     const saved = await store.saveGame({
       roomId: room.id, expectedVersion: expected, state,
       publicState: publicOf(state, []), hands: handsOf(state), status: 'playing'
@@ -223,7 +239,7 @@ export function createCore({ store, engine, random = Math.random }) {
         case 'end': return await endRoom(userId, req);
         case 'start': return await startRound(userId, req, false);
         case 'next_round': return await startRound(userId, req, true);
-        case 'play': case 'draw': case 'pass': return await gameAction(userId, req);
+        case 'play': case 'draw': case 'pass': case 'waahid': case 'catch': return await gameAction(userId, req);
         case 'state': return await getState(userId, req);
         default: return fail('unknown_action', 'Aksi tidak dikenal.');
       }

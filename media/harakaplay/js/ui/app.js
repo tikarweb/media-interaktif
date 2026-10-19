@@ -267,11 +267,13 @@
     bindModes();
     $('btn-practice').addEventListener('click', function () {
       HP.levelsUI.fill($('setup-level'));
+      $('setup-level').parentNode.firstElementChild.textContent = HP.levelsUI.noun() + ' ' + (HP.levelsUI.getMode() === 'iqlab' ? 'kata' : 'belajar');
       $('setup-mode').textContent = HP.config.getMode(HP.levelsUI.getMode()).name;
       show('setup'); $('player-name').focus();
     });
     $('btn-online').addEventListener('click', function () {
-      HP.levelsUI.fillAll($('lobby-level'));
+      HP.levelsUI.fill($('lobby-level'));
+      $('lobby-level-box').firstElementChild.textContent = HP.levelsUI.noun() + ' ' + (HP.levelsUI.getMode() === 'iqlab' ? 'kata' : 'belajar');
       if (HP.online) HP.online.open(); else dialogs.openModal('modal-online');
     });
     $('waahid-btn').addEventListener('click', onWaahid);
