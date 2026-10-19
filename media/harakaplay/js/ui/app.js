@@ -271,7 +271,7 @@
       show('setup'); $('player-name').focus();
     });
     $('btn-online').addEventListener('click', function () {
-      HP.levelsUI.fill($('lobby-level'));
+      HP.levelsUI.fillAll($('lobby-level'));
       if (HP.online) HP.online.open(); else dialogs.openModal('modal-online');
     });
     $('waahid-btn').addEventListener('click', onWaahid);

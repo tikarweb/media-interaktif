@@ -62,6 +62,29 @@
     }
   }
 
+  // Untuk Ruang Tunggu online: semua mode sekaligus (dikelompokkan), supaya tuan rumah
+  // tidak bergantung pada mode yang terpilih di menu perangkatnya.
+  function fillAll(select, selectedId) {
+    select.innerHTML = '';
+    config.MODES.forEach(function (m) {
+      if (!m.available || !m.levels.length) return;
+      var g = document.createElement('optgroup');
+      g.label = m.name + ' (' + m.tag + ')';
+      m.levels.forEach(function (l) {
+        var o = document.createElement('option');
+        o.value = l.id;
+        o.textContent = label(l);
+        g.appendChild(o);
+      });
+      select.appendChild(g);
+    });
+    select.value = selectedId || remembered();
+    if (!select.__hpBound) {
+      select.__hpBound = true;
+      select.addEventListener('change', function () { remember(select.value); });
+    }
+  }
+
   // Level berikutnya dalam mode yang sama
   function nextOf(levelId) {
     var lv = list(config.modeOfLevel(levelId));
@@ -70,7 +93,7 @@
   }
 
   HP.levelsUI = {
-    fill: fill, label: label, nextOf: nextOf, remembered: remembered, remember: remember,
+    fill: fill, fillAll: fillAll, label: label, nextOf: nextOf, remembered: remembered, remember: remember,
     getMode: getMode, setMode: setMode, loadMode: loadMode, list: list
   };
 }());

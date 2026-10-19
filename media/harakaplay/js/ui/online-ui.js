@@ -357,7 +357,7 @@
 
   /* ---------- Tombol layar Online & Lobi ---------- */
   function bind() {
-    HP.levelsUI.fill($('lobby-level'));
+    HP.levelsUI.fillAll($('lobby-level'));
     $('btn-create-room').addEventListener('click', createRoom);
     $('btn-join-room').addEventListener('click', joinRoom);
     $('btn-resume').addEventListener('click', resume);
