@@ -77,9 +77,19 @@
     chipColor.style.setProperty('--swatch', color.hex);
     $('active-color-name').textContent = color.name;
 
-    var h = config.harakaById[view.activeHaraka];
-    $('active-haraka-mark').textContent = 'ا' + h.mark;
-    $('active-haraka-name').textContent = h.name;
+    if (view.mode === 'syadid') {
+      var pl = config.polaById[view.activeHaraka];
+      $('active-haraka-label').textContent = 'Pola aktif';
+      $('active-haraka-mark').textContent = pl.ar;
+      $('active-haraka-name').textContent = pl.nama;
+      $('active-haraka-mark').classList.add('is-pola');
+    } else {
+      var h = config.harakaById[view.activeHaraka];
+      $('active-haraka-label').textContent = 'Harakat aktif';
+      $('active-haraka-mark').textContent = 'ا' + h.mark;
+      $('active-haraka-name').textContent = h.name;
+      $('active-haraka-mark').classList.remove('is-pola');
+    }
 
     // Cara baca kartu teratas (membantu belajar pelafalan)
     var say = $('say-syllable');
@@ -127,6 +137,8 @@
 
   function renderScore(view) {
     var lv = config.getLevel(view.level);
+    var hintBtn = $('hint-pola-btn');
+    if (hintBtn) hintBtn.hidden = view.mode !== 'syadid';
     $('score-brief').textContent = lv.name + '  •  Ronde ' + view.round + '  •  Skor kamu: ' + (view.scores[view.me.id] || 0);
   }
 

@@ -75,15 +75,72 @@
   }
 
   function chooseHaraka(levelId) {
-    var list = config.getLevel(levelId).harakat.map(function (id) { return config.harakaById[id]; });
+    var level = config.getLevel(levelId);
+    var pola = !!level.vocab;     // Syadid: yang dipilih adalah POLA kata
+    var list = level.harakat.map(function (id) { return pola ? config.polaById[id] : config.harakaById[id]; });
+    document.getElementById('haraka-title').textContent = pola ? 'Pilih pola kata' : 'Pilih harakat';
     return choose('modal-haraka', 'haraka-options', list, function (h) {
       var b = document.createElement('button');
       b.type = 'button';
-      b.className = 'hp-choice';
+      b.className = 'hp-choice' + (pola ? ' hp-choice--pola' : '');
       b.innerHTML = '<span class="hp-choice__mark"></span><span class="hp-choice__name"></span>';
-      b.querySelector('.hp-choice__mark').textContent = 'ا' + h.mark;
-      b.querySelector('.hp-choice__name').textContent = h.name;
+      b.querySelector('.hp-choice__mark').textContent = pola ? h.ar : 'ا' + h.mark;
+      b.querySelector('.hp-choice__name').textContent = pola ? h.nama : h.name;
       return b;
+    });
+  }
+
+  /* ---------- Kuis arti (Haraka Syadid) ----------
+     Menampilkan kata gundul + 3 pilihan arti. Mengembalikan Promise:
+     id kata yang dipilih, atau null bila pemain menekan "Lewati". Setelah memilih,
+     jawaban benar disorot hijau (salah = merah) dan bentuk berharakat ditampilkan
+     sebentar sebelum jendela menutup. */
+  function askQuiz(wordId, levelId) {
+    return new Promise(function (resolve) {
+      var HPns = window.HarakaPlay;
+      var v = config.vocabById[wordId];
+      var opts = HPns.rules.quizOptions(wordId, levelId);
+      var box = document.getElementById('quiz-options');
+      var skip = document.getElementById('quiz-skip');
+      var done = false;
+      document.getElementById('quiz-word').textContent = v.arab;
+      document.getElementById('quiz-voc').textContent = '';
+      document.getElementById('quiz-voc').hidden = true;
+      box.innerHTML = '';
+      function finish(value) {
+        if (done) return;
+        done = true;
+        closeModal('modal-quiz');
+        resolve(value);
+      }
+      opts.forEach(function (o) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'hp-choice hp-choice--quiz';
+        b.textContent = o.arti;
+        b.addEventListener('click', function () {
+          if (done || box.getAttribute('data-locked')) return;
+          box.setAttribute('data-locked', '1');
+          Array.prototype.forEach.call(box.children, function (c, i) {
+            c.disabled = true;
+            if (opts[i].id === wordId) c.className += ' is-right';
+          });
+          if (o.id !== wordId) b.className += ' is-wrong';
+          var voc = document.getElementById('quiz-voc');
+          voc.textContent = v.voc + '  =  ' + v.arti;
+          voc.hidden = false;
+          skip.hidden = true;
+          if (HPns.pronounce) HPns.pronounce.playWord(wordId);
+          setTimeout(function () { finish(o.id); }, o.id === wordId ? 1100 : 1700);
+        });
+        box.appendChild(b);
+      });
+      box.removeAttribute('data-locked');
+      skip.hidden = false;
+      skip.onclick = function () { finish(null); };
+      var modal = document.getElementById('modal-quiz');
+      modal.onkeydown = function (e) { if (e.key === 'Escape' && !box.getAttribute('data-locked')) finish(null); };
+      openModal('modal-quiz');
     });
   }
 
@@ -123,6 +180,7 @@
     openModal: openModal,
     closeModal: closeModal,
     chooseHaraka: chooseHaraka,
+    askQuiz: askQuiz,
     chooseColor: chooseColor,
     confirmDialog: confirmDialog
   };

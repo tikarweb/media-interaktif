@@ -302,3 +302,49 @@ test('Waahid & Tangkap online: di luar giliran, denda tercatat, bukan anggota di
   r = await call('u1', { action: 'waahid', roomId });
   assert.equal(r.ok, false);
 });
+
+test('Syadid online: need_quiz dari server, jawaban salah = ambil 1, benar = main; statistik publik', async () => {
+  const { store, call } = setup();
+  const c = await call('u1', { action: 'create', name: 'A' });
+  await call('u2', { action: 'join', code: c.code, name: 'B' });
+  const st = await call('u1', { action: 'start', roomId: c.roomId, level: 's1' });
+  assert.equal(st.ok, true);
+  const pub0 = store._rooms.get(c.roomId).public_state;
+  assert.equal(pub0.mode, 'syadid');
+  assert.deepEqual(pub0.quizMissed, []);
+  const turnUser = pub0.turnPlayerId;
+  // cari kartu cocok warna di tangan; bila tidak ada, ambil dari rahasia (uji, dengan menyusun tangan)
+  const sec = store._secrets.get(c.roomId);
+  const state = sec.state;
+  const me = state.players[state.turn];
+  let card = me.hand.find((x) => x.type === 'normal' && (x.color === state.activeColor || x.haraka === state.activeHaraka));
+  if (!card) {
+    card = state.drawPile.find((x) => x.type === 'normal' && x.color === state.activeColor);
+    state.drawPile.splice(state.drawPile.indexOf(card), 1);
+    me.hand.push(card);
+    store._hands.set('room1|' + me.id, { cards: me.hand, drawn: null });
+  }
+  let r = await call(turnUser, { action: 'play', roomId: c.roomId, cardId: card.id });
+  assert.equal(r.ok, false); assert.equal(r.code, 'need_quiz'); assert.equal(r.needs, 'quiz');
+  const before = me.hand.length;
+  r = await call(turnUser, { action: 'play', roomId: c.roomId, cardId: card.id, answer: 'tidak-ada' });
+  assert.equal(r.ok, true);
+  let pub = store._rooms.get(c.roomId).public_state;
+  assert.equal(pub.quizBy[turnUser].no, 1);
+  assert.equal(pub.quizMissed[0].wordId, card.word);
+  assert.notEqual(pub.turnPlayerId, turnUser);
+  assert.equal(pub.players.find((p) => p.id === turnUser).handCount, before + 1);
+  assert.ok(pub.lastEvents.some((e) => e.type === 'quizWrong' && e.wordId === card.word));
+  // giliran lawan; kembali ke pemain pertama dengan menyusun ulang tidak perlu: uji jawaban benar oleh lawan
+  const other = pub.turnPlayerId;
+  const s2 = store._secrets.get(c.roomId).state;
+  const me2 = s2.players[s2.turn];
+  let card2 = me2.hand.find((x) => x.type === 'normal' && (x.color === s2.activeColor || x.haraka === s2.activeHaraka));
+  if (card2) {
+    r = await call(other, { action: 'play', roomId: c.roomId, cardId: card2.id, answer: card2.word });
+    assert.equal(r.ok, true);
+    pub = store._rooms.get(c.roomId).public_state;
+    assert.equal(pub.quizBy[other].ok, 1);
+    assert.ok(pub.lastEvents.some((e) => e.type === 'quizOk'));
+  }
+});

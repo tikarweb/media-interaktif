@@ -10,7 +10,8 @@
    Function) sehingga aturannya identik dan klien tidak dipercaya.
 
    Bentuk aksi:
-     { type: 'play', playerId, cardId, choice?, expectedVersion? }
+     { type: 'play', playerId, cardId, choice?, answer?, expectedVersion? }
+        answer = id kata pilihan kuis arti (hanya Mode Syadid; tanpa answer -> 'need_quiz')
      { type: 'draw', playerId, expectedVersion? }
      { type: 'pass', playerId, expectedVersion? }   // setelah mengambil kartu
      { type: 'waahid', playerId }   // pemain yang kartunya tinggal 1 menekan "وَاحِد !"
@@ -53,7 +54,8 @@
     waahid_not_yet: 'Belum waktunya. Tekan "وَاحِد !" saat kartumu tinggal 1.',
     waahid_late: 'Terlambat. Giliran sudah berlanjut.',
     nothing_to_catch: 'Tidak ada yang bisa ditangkap sekarang.',
-    cannot_catch_self: 'Kamu tidak bisa menangkap dirimu sendiri.'
+    cannot_catch_self: 'Kamu tidak bisa menangkap dirimu sendiri.',
+    need_quiz: 'Jawab dulu kuis arti kata ini.'
   };
 
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
@@ -147,9 +149,11 @@
       target: null,              // Iqlab: { wordId, filled:[bool,...] }
       wordQueue: [],
       wordsDone: [],             // Iqlab: [{ wordId, by }] kata yang selesai di ronde ini
-      wordsBy: {}
+      wordsBy: {},
+      quizBy: {},                // Syadid: { playerId: { ok, no } } hasil kuis arti
+      quizMissed: []             // Syadid: [{ wordId, by }] kata yang salah dijawab (untuk diulang)
     };
-    players.forEach(function (p) { st.wordsBy[p.id] = 0; });
+    players.forEach(function (p) { st.wordsBy[p.id] = 0; st.quizBy[p.id] = { ok: 0, no: 0 }; });
     if (level.mode === 'iqlab') pickNextWord(st, rng);
     return st;
   }
@@ -220,6 +224,18 @@
       return reject(state, 'card_not_playable');
     }
 
+    // Syadid: sebelum kartu kata dimainkan, pemain menjawab kuis arti (3 pilihan).
+    // Jawaban = id kata yang dipilih. Benar -> kartu dimainkan. Salah -> kartu tidak
+    // dimainkan, pemain mengambil 1 kartu, dan giliran berpindah.
+    var quizEvent = null;
+    if (state.mode === 'syadid' && card.type === T.NORMAL && card.word) {
+      if (action.answer === undefined || action.answer === null || action.answer === '') {
+        return reject(state, 'need_quiz', { needs: 'quiz' });
+      }
+      if (action.answer !== card.word) return doQuizWrong(state, idx, card, rng);
+      quizEvent = { type: 'quizOk', playerId: me.id, wordId: card.word };
+    }
+
     // Pilihan harakat / warna (tidak perlu kalau ini kartu terakhir -> langsung menang)
     var kind = rules.needsChoice(card);
     var isLastCard = me.hand.length === 1;
@@ -240,6 +256,11 @@
     s.drawnCardId = null;
     s.waahidFor = null;       // aksi pemain berikutnya menutup jendela tangkap
     var events = [{ type: 'play', playerId: p.id, card: played, choice: action.choice || null }];
+    if (quizEvent) {
+      s.quizBy[p.id] = s.quizBy[p.id] || { ok: 0, no: 0 };
+      s.quizBy[p.id].ok++;
+      events.unshift(quizEvent);
+    }
 
     // Warna & harakat aktif
     if (played.type === T.NORMAL) {
@@ -316,6 +337,22 @@
 
     s.version = state.version + 1;
     return { ok: true, state: s, events: events };
+  }
+
+  // Jawaban kuis salah: ambil 1 kartu, kartu yang dipilih tetap di tangan, giliran pindah
+  function doQuizWrong(state, idx, card, rng) {
+    var s = clone(state);
+    var p = s.players[idx];
+    s.quizBy[p.id] = s.quizBy[p.id] || { ok: 0, no: 0 };
+    s.quizBy[p.id].no++;
+    s.quizMissed.push({ wordId: card.word, by: p.id });
+    var got = drawOne(s, rng);
+    if (got) p.hand.push(got);
+    s.drawnCardId = null;
+    s.waahidFor = null;
+    s.turn = turns.nextIndex(s.players.length, idx, 1);
+    s.version = state.version + 1;
+    return { ok: true, state: s, events: [{ type: 'quizWrong', playerId: p.id, wordId: card.word, gotCard: !!got }] };
   }
 
   function doWaahid(state, idx) {
@@ -408,6 +445,8 @@
       target: state.target ? { wordId: state.target.wordId, filled: state.target.filled.slice() } : null,
       wordsDone: (state.wordsDone || []).slice(),
       wordsBy: Object.assign({}, state.wordsBy || {}),
+      quizBy: JSON.parse(JSON.stringify(state.quizBy || {})),
+      quizMissed: (state.quizMissed || []).slice(),
       winnerId: state.winnerId,
       roundScore: state.roundScore,
       scores: Object.assign({}, state.scores)

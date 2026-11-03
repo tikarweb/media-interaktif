@@ -233,6 +233,7 @@
       tb.appendChild(tr);
     });
     HP.wordUI.renderResultWords(pub.mode === 'iqlab' ? pub.wordsDone : [], names, ctx.meId);
+    HP.wordUI.renderQuizReview(pub.mode === 'syadid' ? pub : null, names, ctx.meId);
     var nxt = HP.levelsUI.nextOf(pub.level);
     $('btn-again').textContent = isHost() ? 'Ulangi Level Ini' : 'Menunggu tuan rumah…';
     $('btn-again').disabled = !isHost();
@@ -263,6 +264,14 @@
       if (notMine()) { dialogs.toast('Belum giliranmu.', 'warn'); return; }
       var mine = ctx;
       var r = await send({ action: 'play', cardId: card.id });
+      if (!r.ok && r.code === 'need_quiz') {
+        // Syadid: kuis arti dulu. Dibatalkan (Lewati) -> tidak ada yang berubah.
+        mine.busy = true;
+        var ans = await dialogs.askQuiz(card.word, mine.snap.room.public_state.level);
+        mine.busy = false;
+        if (!ans) return;
+        r = await send({ action: 'play', cardId: card.id, answer: ans });
+      }
       if (!r.ok && r.code === 'need_choice') {
         mine.busy = true;
         var value = await (r.needs === 'haraka' ? dialogs.chooseHaraka(mine.snap.room.public_state.level) : dialogs.chooseColor());

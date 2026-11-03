@@ -54,10 +54,23 @@
     return undefined;
   }
 
+  var BOT_QUIZ_ACCURACY = 0.75;
+
+  // Kata lain di tema yang sama (jawaban salah milik bot)
+  function otherWord(wordId, levelId) {
+    var list = (config.getLevel(levelId).vocab || []).filter(function (id) { return id !== wordId; });
+    return list.length ? list[Math.floor(Math.random() * list.length)] : '';
+  }
+
   function playAction(view, card) {
     var action = { type: 'play', playerId: view.me.id, cardId: card.id };
     var choice = pickChoice(card, view.me.hand, view.level);
     if (choice !== undefined) action.choice = choice;
+    if (view.mode === 'syadid' && card.type === T.NORMAL && card.word) {
+      // Kuis arti: bot menjawab benar ±75% (bisa diatur lewat opsi accuracy)
+      var right = Math.random() < (BOT_QUIZ_ACCURACY);
+      action.answer = right ? card.word : otherWord(card.word, view.level);
+    }
     return action;
   }
 

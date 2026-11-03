@@ -84,6 +84,109 @@ REG["kata"] = (function () {
   }).call({});
   return module.exports;
 })();
+REG["kosakata"] = (function () {
+  const module = { exports: {} };
+  const require = (p) => REG[p.split('/').pop()];
+  (function () {
+/* =====================================================
+   KOSAKATA.JS — DATABASE KOSAKATA (Mode Haraka Syadid: Arab Gundul)
+   File ini khusus untuk kamu review & edit.
+
+   Format satu kata:
+     { id: 'katib', arab: 'كاتب', voc: 'كَاتِب', arti: 'penulis', pola: 'faail' }
+
+     id    : nama unik (huruf kecil, tanpa spasi). Juga nama file audio kata:
+             audio/kata/<id>.mp3
+     arab  : kata GUNDUL (tanpa harakat). Inilah yang tampil di kartu.
+     voc   : kata yang sama DENGAN harakat. Muncul sebagai pembelajaran
+             setelah kuis dan di layar hasil. Jika dihapus harakatnya harus
+             persis sama dengan `arab` (diperiksa otomatis oleh `node --test`).
+     arti  : arti bahasa Indonesia (3 pilihan kuis diambil dari arti kata lain
+             di tema yang sama, jadi arti dalam satu tema harus berbeda-beda).
+     pola  : salah satu id di POLA (kartu cocok jika warna ATAU pola sama).
+
+   TEMA = satu "level" di Mode Syadid. Tiap tema berisi 12 id kata
+   (idealnya 3 kata untuk tiap pola, supaya kecocokan pola sering terjadi).
+   Menambah kata / tema: tambahkan baris, lalu (jika memakai mode online)
+   jalankan  node scripts/build-engine.js  dan deploy ulang fungsi "game".
+   ===================================================== */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    var HP = (root.HarakaPlay = root.HarakaPlay || {});
+    HP.kosakataData = factory();
+  }
+}(this, function () {
+  'use strict';
+
+  // Pola kata (wazan). `ar` = bentuk wazan, `nama` = nama singkat untuk pemain.
+  var POLA = [
+    { id: 'faail',  ar: 'فَاعِل',   nama: 'Pelaku',  ket: 'isim fa’il: yang melakukan (pola فَاعِل)' },
+    { id: 'mafuul', ar: 'مَفْعُول', nama: 'Objek',   ket: 'isim maf’ul: yang dikenai pekerjaan (pola مَفْعُول)' },
+    { id: 'mafal',  ar: 'مَفْعَل',  nama: 'Tempat',  ket: 'isim makan: tempat (pola مَفْعَل)' },
+    { id: 'afaal',  ar: 'أَفْعَال', nama: 'Jamak',   ket: 'jamak taksir: banyak (pola أَفْعَال)' }
+  ];
+
+  var KOSAKATA = [
+    // ===== Tema 1: Sekolah =====
+    { id: 'katib',    arab: 'كاتب',   voc: 'كَاتِب',   arti: 'penulis',              pola: 'faail'  },
+    { id: 'thalib',   arab: 'طالب',   voc: 'طَالِب',   arti: 'pelajar',              pola: 'faail'  },
+    { id: 'najih',    arab: 'ناجح',   voc: 'نَاجِح',   arti: 'yang lulus',           pola: 'faail'  },
+    { id: 'maktub',   arab: 'مكتوب',  voc: 'مَكْتُوب', arti: 'yang tertulis',        pola: 'mafuul' },
+    { id: 'maftuh',   arab: 'مفتوح',  voc: 'مَفْتُوح', arti: 'yang terbuka',         pola: 'mafuul' },
+    { id: 'mafhum',   arab: 'مفهوم',  voc: 'مَفْهُوم', arti: 'yang dipahami',        pola: 'mafuul' },
+    { id: 'maktab',   arab: 'مكتب',   voc: 'مَكْتَب',  arti: 'kantor / meja tulis',  pola: 'mafal'  },
+    { id: 'maqad',    arab: 'مقعد',   voc: 'مَقْعَد',  arti: 'tempat duduk',         pola: 'mafal'  },
+    { id: 'malab',    arab: 'ملعب',   voc: 'مَلْعَب',  arti: 'lapangan',             pola: 'mafal'  },
+    { id: 'aqlam',    arab: 'أقلام',  voc: 'أَقْلَام', arti: 'pena-pena',            pola: 'afaal'  },
+    { id: 'awraq',    arab: 'أوراق',  voc: 'أَوْرَاق', arti: 'kertas-kertas',        pola: 'afaal'  },
+    { id: 'abwab',    arab: 'أبواب',  voc: 'أَبْوَاب', arti: 'pintu-pintu',          pola: 'afaal'  },
+
+    // ===== Tema 2: Rumah & Dapur =====
+    { id: 'sakin',    arab: 'ساكن',   voc: 'سَاكِن',   arti: 'penghuni',             pola: 'faail'  },
+    { id: 'thabikh',  arab: 'طابخ',   voc: 'طَابِخ',   arti: 'juru masak',           pola: 'faail'  },
+    { id: 'khadim',   arab: 'خادم',   voc: 'خَادِم',   arti: 'pelayan',              pola: 'faail'  },
+    { id: 'mathbukh', arab: 'مطبوخ',  voc: 'مَطْبُوخ', arti: 'yang dimasak',         pola: 'mafuul' },
+    { id: 'maghsul',  arab: 'مغسول',  voc: 'مَغْسُول', arti: 'yang dicuci',          pola: 'mafuul' },
+    { id: 'masyrub',  arab: 'مشروب',  voc: 'مَشْرُوب', arti: 'yang diminum',         pola: 'mafuul' },
+    { id: 'mathbakh', arab: 'مطبخ',   voc: 'مَطْبَخ',  arti: 'dapur',                pola: 'mafal'  },
+    { id: 'maghsal',  arab: 'مغسل',   voc: 'مَغْسَل',  arti: 'tempat mencuci',       pola: 'mafal'  },
+    { id: 'maskan',   arab: 'مسكن',   voc: 'مَسْكَن',  arti: 'tempat tinggal',       pola: 'mafal'  },
+    { id: 'athbaq',   arab: 'أطباق',  voc: 'أَطْبَاق', arti: 'piring-piring',        pola: 'afaal'  },
+    { id: 'akwab',    arab: 'أكواب',  voc: 'أَكْوَاب', arti: 'gelas-gelas',          pola: 'afaal'  },
+    { id: 'aqfal',    arab: 'أقفال',  voc: 'أَقْفَال', arti: 'kunci-kunci',          pola: 'afaal'  },
+
+    // ===== Tema 3: Kota & Perjalanan =====
+    { id: 'saiq',     arab: 'سائق',   voc: 'سَائِق',   arti: 'sopir',                pola: 'faail'  },
+    { id: 'rakib',    arab: 'راكب',   voc: 'رَاكِب',   arti: 'penumpang',            pola: 'faail'  },
+    { id: 'zair',     arab: 'زائر',   voc: 'زَائِر',   arti: 'pengunjung',           pola: 'faail'  },
+    { id: 'masyhur',  arab: 'مشهور',  voc: 'مَشْهُور', arti: 'yang terkenal',        pola: 'mafuul' },
+    { id: 'maruf',    arab: 'معروف',  voc: 'مَعْرُوف', arti: 'yang dikenal',         pola: 'mafuul' },
+    { id: 'maqshud',  arab: 'مقصود',  voc: 'مَقْصُود', arti: 'yang dituju',          pola: 'mafuul' },
+    { id: 'mathham',  arab: 'مطعم',   voc: 'مَطْعَم',  arti: 'restoran',             pola: 'mafal'  },
+    { id: 'mashna',   arab: 'مصنع',   voc: 'مَصْنَع',  arti: 'pabrik',               pola: 'mafal'  },
+    { id: 'makhbaz',  arab: 'مخبز',   voc: 'مَخْبَز',  arti: 'toko roti',            pola: 'mafal'  },
+    { id: 'aswaq',    arab: 'أسواق',  voc: 'أَسْوَاق', arti: 'pasar-pasar',          pola: 'afaal'  },
+    { id: 'anhar',    arab: 'أنهار',  voc: 'أَنْهَار', arti: 'sungai-sungai',        pola: 'afaal'  },
+    { id: 'asfar',    arab: 'أسفار',  voc: 'أَسْفَار', arti: 'perjalanan-perjalanan', pola: 'afaal' }
+  ];
+
+  var TEMA = [
+    { id: 's1', judul: 'Sekolah',
+      kata: ['katib', 'thalib', 'najih', 'maktub', 'maftuh', 'mafhum', 'maktab', 'maqad', 'malab', 'aqlam', 'awraq', 'abwab'] },
+    { id: 's2', judul: 'Rumah & Dapur',
+      kata: ['sakin', 'thabikh', 'khadim', 'mathbukh', 'maghsul', 'masyrub', 'mathbakh', 'maghsal', 'maskan', 'athbaq', 'akwab', 'aqfal'] },
+    { id: 's3', judul: 'Kota & Perjalanan',
+      kata: ['saiq', 'rakib', 'zair', 'masyhur', 'maruf', 'maqshud', 'mathham', 'mashna', 'makhbaz', 'aswaq', 'anhar', 'asfar'] }
+  ];
+
+  return { POLA: POLA, KOSAKATA: KOSAKATA, TEMA: TEMA };
+}));
+
+  }).call({});
+  return module.exports;
+})();
 REG["config"] = (function () {
   const module = { exports: {} };
   const require = (p) => REG[p.split('/').pop()];
@@ -99,12 +202,12 @@ REG["config"] = (function () {
    ===================================================== */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('./data/kata'));
+    module.exports = factory(require('./data/kata'), require('./data/kosakata'));
   } else {
     var HP = (root.HarakaPlay = root.HarakaPlay || {});
-    HP.config = factory(HP.kataData);      // js/data/kata.js harus dimuat lebih dulu
+    HP.config = factory(HP.kataData, HP.kosakataData);   // js/data/kata.js & kosakata.js dimuat lebih dulu
   }
-}(this, function (kataData) {
+}(this, function (kataData, kosaData) {
   'use strict';
 
   // Urutan warna juga dipakai untuk mengurutkan kartu di tangan
@@ -234,14 +337,40 @@ REG["config"] = (function () {
              words: p.kata.slice(), syllables: syllables, letters: letters, harakat: harakat };
   });
 
+  // ===== TEMA KOSAKATA (Mode Haraka Syadid: Arab Gundul) =====
+  // Dibangun dari js/data/kosakata.js. Satu kartu = satu kata gundul.
+  // Pada kartu Syadid, kolom `haraka` berisi ID POLA kata (faail/mafuul/mafal/afaal),
+  // sehingga aturan "warna sama ATAU pola sama" memakai mesin yang sama dengan Asasi/Iqlab.
+  var POLAS = (kosaData && kosaData.POLA) || [];
+  var VOCAB = ((kosaData && kosaData.KOSAKATA) || []).map(function (v) {
+    return { id: v.id, arab: v.arab, voc: v.voc || v.arab, arti: v.arti, pola: v.pola };
+  });
+  var VOCAB_BY_ID = {};
+  VOCAB.forEach(function (v) { VOCAB_BY_ID[v.id] = v; });
+  var POLA_BY_ID = {};
+  POLAS.forEach(function (p) { POLA_BY_ID[p.id] = p; });
+
+  var THEMES = ((kosaData && kosaData.TEMA) || []).map(function (t, i) {
+    var polas = [];
+    t.kata.forEach(function (vid) {
+      var v = VOCAB_BY_ID[vid];
+      if (!v) throw new Error('Tema ' + t.id + ' merujuk kata yang tidak ada: ' + vid);
+      if (!POLA_BY_ID[v.pola]) throw new Error('Kata ' + vid + ' memakai pola tak dikenal: ' + v.pola);
+      if (polas.indexOf(v.pola) < 0) polas.push(v.pola);
+    });
+    // harakat = daftar pola (dipakai kartu "Ganti Pola" dan bot)
+    return { id: t.id, mode: 'syadid', name: 'Tema ' + (i + 1), title: t.judul,
+             vocab: t.kata.slice(), polas: polas, harakat: polas, letters: [] };
+  });
+
   // ===== TIGA MODE =====
   var MODES = [
     { id: 'asasi',  name: 'Haraka Asasi',  ar: 'أَسَاسِي', tag: 'Pemula',   desc: 'Huruf hijaiyah + harakat, dengan bantuan cara baca Latin',
       showLatin: true,  available: true,  levels: LEVELS },
     { id: 'iqlab',  name: 'Haraka Iqlab',  ar: 'إِقْلَاب', tag: 'Menengah', desc: 'Rangkai kata berharakat, tanpa bantuan Latin',
       showLatin: false, available: true,  levels: PACKS },
-    { id: 'syadid', name: 'Haraka Syadid', ar: 'شَدِيد',   tag: 'Mahir',    desc: 'Arab gundul & kosakata tematik',
-      showLatin: false, available: false, levels: [] }
+    { id: 'syadid', name: 'Haraka Syadid', ar: 'شَدِيد',   tag: 'Mahir',    desc: 'Kata Arab gundul bertema, cocokkan warna atau pola kata, jawab kuis arti',
+      showLatin: false, available: true,  levels: THEMES }
   ];
 
   // Istilah antarmuka (Arab + Indonesia). Ubah di sini bila perlu.
@@ -250,7 +379,8 @@ REG["config"] = (function () {
     turn:   { ar: 'نَوْبَة',    id: 'Giliran' },
     waahid: { ar: 'وَاحِد !',   id: 'Waahid!' },
     catch:  { ar: 'أَمْسِكْ !', id: 'Tangkap!' },
-    word:   { ar: 'الْكَلِمَة', id: 'Target Kata' }
+    word:   { ar: 'الْكَلِمَة', id: 'Target Kata' },
+    pola:   { ar: 'الْوَزْن',   id: 'Pola' }
   };
 
   var CONFIG = {
@@ -259,6 +389,9 @@ REG["config"] = (function () {
     LETTERS: LETTERS,
     LEVELS: LEVELS,
     PACKS: PACKS,
+    THEMES: THEMES,
+    POLAS: POLAS,
+    VOCAB: VOCAB,
     WORDS: WORDS,
     MODES: MODES,
     UI: UI,
@@ -279,7 +412,9 @@ REG["config"] = (function () {
   CONFIG.colorById = byId(COLORS);
   CONFIG.harakaById = byId(HARAKAT);
   CONFIG.letterById = byId(LETTERS);
-  CONFIG.levelById = byId(LEVELS.concat(PACKS));
+  CONFIG.levelById = byId(LEVELS.concat(PACKS, THEMES));
+  CONFIG.vocabById = VOCAB_BY_ID;
+  CONFIG.polaById = POLA_BY_ID;
   CONFIG.wordById = WORD_BY_ID;
   CONFIG.modeById = byId(MODES);
 
@@ -333,7 +468,16 @@ REG["deck"] = (function () {
     //  - Asasi: semua huruf x semua harakat level
     //  - Iqlab (paket kata): suku kata unik dari kata-kata paket
     var syllables = level.syllables;
-    if (!syllables) {
+    if (level.vocab) {
+      // Syadid: satu kata gundul per kartu; `haraka` = id pola kata
+      config.COLORS.forEach(function (color) {
+        level.vocab.forEach(function (wid) {
+          cards.push({ id: 'n-' + color.id + '-' + wid, type: TYPES.NORMAL, color: color.id,
+                       word: wid, haraka: config.vocabById[wid].pola });
+        });
+      });
+      syllables = [];
+    } else if (!syllables) {
       syllables = [];
       level.letters.forEach(function (letterId) {
         level.harakat.forEach(function (harakaId) { syllables.push({ letter: letterId, haraka: harakaId }); });
@@ -517,7 +661,21 @@ REG["rules"] = (function () {
     return false;
   }
 
-  return { isPlayable: isPlayable, needsChoice: needsChoice, isValidChoice: isValidChoice };
+  // Mode Syadid: 3 pilihan arti untuk kuis sebelum kartu kata dimainkan.
+  // Jawaban benar + 2 pengecoh dari tema yang sama, urutan diacak.
+  // Mengembalikan [{ id: <id kata>, arti }]; jawaban dikirim sebagai id kata.
+  function quizOptions(vocabId, levelId, rng) {
+    var level = config.getLevel(levelId);
+    var right = config.vocabById[vocabId];
+    if (!right) return [];
+    var pool = (level.vocab || []).filter(function (id) {
+      return id !== vocabId && config.vocabById[id].arti !== right.arti;
+    });
+    var picks = deck.shuffle(pool, rng).slice(0, 2).concat([vocabId]);
+    return deck.shuffle(picks, rng).map(function (id) { return { id: id, arti: config.vocabById[id].arti }; });
+  }
+
+  return { isPlayable: isPlayable, needsChoice: needsChoice, isValidChoice: isValidChoice, quizOptions: quizOptions };
 }));
 
   }).call({});
@@ -539,7 +697,8 @@ REG["game-state"] = (function () {
    Function) sehingga aturannya identik dan klien tidak dipercaya.
 
    Bentuk aksi:
-     { type: 'play', playerId, cardId, choice?, expectedVersion? }
+     { type: 'play', playerId, cardId, choice?, answer?, expectedVersion? }
+        answer = id kata pilihan kuis arti (hanya Mode Syadid; tanpa answer -> 'need_quiz')
      { type: 'draw', playerId, expectedVersion? }
      { type: 'pass', playerId, expectedVersion? }   // setelah mengambil kartu
      { type: 'waahid', playerId }   // pemain yang kartunya tinggal 1 menekan "وَاحِد !"
@@ -582,7 +741,8 @@ REG["game-state"] = (function () {
     waahid_not_yet: 'Belum waktunya. Tekan "وَاحِد !" saat kartumu tinggal 1.',
     waahid_late: 'Terlambat. Giliran sudah berlanjut.',
     nothing_to_catch: 'Tidak ada yang bisa ditangkap sekarang.',
-    cannot_catch_self: 'Kamu tidak bisa menangkap dirimu sendiri.'
+    cannot_catch_self: 'Kamu tidak bisa menangkap dirimu sendiri.',
+    need_quiz: 'Jawab dulu kuis arti kata ini.'
   };
 
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
@@ -676,9 +836,11 @@ REG["game-state"] = (function () {
       target: null,              // Iqlab: { wordId, filled:[bool,...] }
       wordQueue: [],
       wordsDone: [],             // Iqlab: [{ wordId, by }] kata yang selesai di ronde ini
-      wordsBy: {}
+      wordsBy: {},
+      quizBy: {},                // Syadid: { playerId: { ok, no } } hasil kuis arti
+      quizMissed: []             // Syadid: [{ wordId, by }] kata yang salah dijawab (untuk diulang)
     };
-    players.forEach(function (p) { st.wordsBy[p.id] = 0; });
+    players.forEach(function (p) { st.wordsBy[p.id] = 0; st.quizBy[p.id] = { ok: 0, no: 0 }; });
     if (level.mode === 'iqlab') pickNextWord(st, rng);
     return st;
   }
@@ -749,6 +911,18 @@ REG["game-state"] = (function () {
       return reject(state, 'card_not_playable');
     }
 
+    // Syadid: sebelum kartu kata dimainkan, pemain menjawab kuis arti (3 pilihan).
+    // Jawaban = id kata yang dipilih. Benar -> kartu dimainkan. Salah -> kartu tidak
+    // dimainkan, pemain mengambil 1 kartu, dan giliran berpindah.
+    var quizEvent = null;
+    if (state.mode === 'syadid' && card.type === T.NORMAL && card.word) {
+      if (action.answer === undefined || action.answer === null || action.answer === '') {
+        return reject(state, 'need_quiz', { needs: 'quiz' });
+      }
+      if (action.answer !== card.word) return doQuizWrong(state, idx, card, rng);
+      quizEvent = { type: 'quizOk', playerId: me.id, wordId: card.word };
+    }
+
     // Pilihan harakat / warna (tidak perlu kalau ini kartu terakhir -> langsung menang)
     var kind = rules.needsChoice(card);
     var isLastCard = me.hand.length === 1;
@@ -769,6 +943,11 @@ REG["game-state"] = (function () {
     s.drawnCardId = null;
     s.waahidFor = null;       // aksi pemain berikutnya menutup jendela tangkap
     var events = [{ type: 'play', playerId: p.id, card: played, choice: action.choice || null }];
+    if (quizEvent) {
+      s.quizBy[p.id] = s.quizBy[p.id] || { ok: 0, no: 0 };
+      s.quizBy[p.id].ok++;
+      events.unshift(quizEvent);
+    }
 
     // Warna & harakat aktif
     if (played.type === T.NORMAL) {
@@ -845,6 +1024,22 @@ REG["game-state"] = (function () {
 
     s.version = state.version + 1;
     return { ok: true, state: s, events: events };
+  }
+
+  // Jawaban kuis salah: ambil 1 kartu, kartu yang dipilih tetap di tangan, giliran pindah
+  function doQuizWrong(state, idx, card, rng) {
+    var s = clone(state);
+    var p = s.players[idx];
+    s.quizBy[p.id] = s.quizBy[p.id] || { ok: 0, no: 0 };
+    s.quizBy[p.id].no++;
+    s.quizMissed.push({ wordId: card.word, by: p.id });
+    var got = drawOne(s, rng);
+    if (got) p.hand.push(got);
+    s.drawnCardId = null;
+    s.waahidFor = null;
+    s.turn = turns.nextIndex(s.players.length, idx, 1);
+    s.version = state.version + 1;
+    return { ok: true, state: s, events: [{ type: 'quizWrong', playerId: p.id, wordId: card.word, gotCard: !!got }] };
   }
 
   function doWaahid(state, idx) {
@@ -937,6 +1132,8 @@ REG["game-state"] = (function () {
       target: state.target ? { wordId: state.target.wordId, filled: state.target.filled.slice() } : null,
       wordsDone: (state.wordsDone || []).slice(),
       wordsBy: Object.assign({}, state.wordsBy || {}),
+      quizBy: JSON.parse(JSON.stringify(state.quizBy || {})),
+      quizMissed: (state.quizMissed || []).slice(),
       winnerId: state.winnerId,
       roundScore: state.roundScore,
       scores: Object.assign({}, state.scores)

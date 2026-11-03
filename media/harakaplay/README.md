@@ -8,7 +8,7 @@ Lawan bot, atau main online 2–4 pemain.
 |---|---|---|---|
 | **Haraka Asasi** (أَسَاسِي) | Pemula | 7 level huruf + harakat, ada bantuan baca Latin | selesai |
 | **Haraka Iqlab** (إِقْلَاب) | Menengah | 4 paket kata fi'il madhi, Rangkai Kata, tanpa bantuan Latin | selesai |
-| **Haraka Syadid** (شَدِيد) | Mahir | Arab gundul + kosakata tematik | segera (tombol sudah ada, belum bisa dipilih) |
+| **Haraka Syadid** (شَدِيد) | Mahir | Arab gundul + kosakata tematik | **aktif**: 3 tema (36 kata), cocok warna ATAU pola kata, kuis arti sebelum kartu dimainkan. Data di `js/data/kosakata.js` |
 
 ## Cara membuka
 Klik dua kali `index.html` (atau Live Server di VS Code). Tanpa install apa pun

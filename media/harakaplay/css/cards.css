@@ -145,3 +145,30 @@
 @media (prefers-reduced-motion: reduce) {
   .hp-card, .hp-card.pop-in { transition: none; animation: none; }
 }
+
+
+/* ---------- Haraka Syadid: kartu kata gundul ---------- */
+.hp-card .glyph--word {
+  font-size: calc(var(--cw) * 0.29);
+  padding: 0 calc(var(--cw) * 0.14) 0;
+  white-space: nowrap;
+  direction: rtl;
+}
+.hp-card .glyph--word.is-mid  { font-size: calc(var(--cw) * 0.25); }
+.hp-card .glyph--word.is-long { font-size: calc(var(--cw) * 0.21); }
+.hp-card .glyph--wild-text {
+  font-family: var(--font-ui);
+  font-size: calc(var(--cw) * 0.17);
+  text-align: center;
+  line-height: 1.15;
+  padding: 0;
+}
+.hp-card .idx--small { font-size: calc(var(--cw) * 0.15); }
+/* Petunjuk pola (nama pola di bawah kata); tersembunyi kecuali tombol Petunjuk dinyalakan */
+.hp-card .pola-tag {
+  position: absolute; left: 0; right: 0; bottom: 5%;
+  display: none; text-align: center; font-family: var(--font-ui);
+  font-size: calc(var(--cw) * 0.12); color: #fff; font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.show-pola .hp-card .pola-tag { display: block; }

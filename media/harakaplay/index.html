@@ -35,8 +35,8 @@
         <button type="button" class="hp-mode hp-mode--iqlab" data-mode="iqlab" aria-pressed="false">
           <span class="hp-mode__ar ar">إِقْلَاب</span><b>Haraka Iqlab</b><small>Menengah</small>
         </button>
-        <button type="button" class="hp-mode hp-mode--syadid is-soon" data-mode="syadid" aria-pressed="false">
-          <span class="hp-mode__ar ar">شَدِيد</span><b>Haraka Syadid</b><small>Mahir · segera</small>
+        <button type="button" class="hp-mode hp-mode--syadid" data-mode="syadid" aria-pressed="false">
+          <span class="hp-mode__ar ar">شَدِيد</span><b>Haraka Syadid</b><small>Mahir</small>
         </button>
       </div>
       <p class="hp-mode-desc" id="mode-desc"></p>
@@ -157,9 +157,10 @@
           <span class="hp-chipinfo"><span class="hp-swatch" id="active-color"></span>
             <span><small>Warna aktif</small><span class="val" id="active-color-name">-</span></span></span>
           <span class="hp-chipinfo"><span class="hp-harakmark" id="active-haraka-mark">-</span>
-            <span><small>Harakat aktif</small><span class="val" id="active-haraka-name">-</span></span></span>
+            <span><small id="active-haraka-label">Harakat aktif</small><span class="val" id="active-haraka-name">-</span></span></span>
         </div>
         <p class="hp-say" id="say-syllable" hidden></p>
+        <button type="button" class="hp-btn hp-btn--small hp-btn--yellow hp-hint-pola" id="hint-pola-btn" aria-pressed="false" hidden>💡 Petunjuk pola</button>
         <div class="hp-meta"><span id="hand-count"></span><span id="score-brief"></span></div>
       </aside>
 
@@ -211,7 +212,7 @@
       <ul>
         <li><b>Haraka Asasi</b> (pemula): kartu huruf + harakat, dengan bantuan cara baca Latin.</li>
         <li><b>Haraka Iqlab</b> (menengah): sambil main, rangkai kata berharakat. Tanpa bantuan Latin.</li>
-        <li><b>Haraka Syadid</b> (mahir): Arab gundul dan kosakata tematik. Segera hadir.</li>
+        <li><b>Haraka Syadid</b> (mahir): kosakata tematik tanpa harakat (Arab gundul). Kartu cocok jika warna sama atau pola kata sama, dan setiap kartu dimainkan setelah menjawab kuis arti.</li>
       </ul>
       <h3>Kartu apa yang boleh dimainkan?</h3>
       <p>Kartu cocok jika <b>warnanya sama</b> atau <b>harakatnya sama</b> dengan warna/harakat aktif. Huruf yang sama saja tidak cukup. Contoh: kartu teratas <span class="ar">بَ</span> merah, maka kamu boleh memainkan kartu merah apa pun, atau kartu berharakat fathah warna apa pun.</p>
@@ -231,6 +232,14 @@
         <li>Aturan main tetap sama. Bila kartu yang kamu buang adalah salah satu suku kata target, <b>kotaknya terisi otomatis</b>, urutannya bebas.</li>
         <li>Yang menaruh potongan terakhir mendapat <b>bonus</b>: pemain berikutnya mengambil 1 kartu. Arti kata muncul, lalu target baru keluar.</li>
       </ul>
+      <h3>Haraka Syadid: pola kata & kuis arti</h3>
+      <ul>
+        <li>Tiap kartu berisi satu kata Arab <b>gundul</b>. Kartu cocok jika <b>warnanya sama</b> atau <b>pola katanya sama</b> dengan pola aktif (misalnya <span class="ar">فَاعِل</span> = pelaku, <span class="ar">مَفْعُول</span> = objek, <span class="ar">مَفْعَل</span> = tempat, <span class="ar">أَفْعَال</span> = jamak).</li>
+        <li>Tombol <b>💡 Petunjuk pola</b> menampilkan nama pola di tiap kartu. Matikan kalau ingin lebih menantang.</li>
+        <li>Sebelum kartu keluar, jawab <b>kuis arti</b> (3 pilihan). Benar: kartu dimainkan. Salah: kamu <b>ambil 1 kartu</b> dan giliran berpindah. Tombol <b>Lewati</b> membatalkan, kamu boleh memilih kartu lain tanpa hukuman.</li>
+        <li>Kartu <b>Ganti Harakat</b> berubah menjadi <b>Ganti Pola</b>: kamu memilih pola baru.</li>
+        <li>Di akhir ronde, kata yang salah dijawab ditampilkan lengkap dengan harakatnya untuk diulang.</li>
+      </ul>
       <h3>Skor</h3>
       <p>Pemenang mendapat jumlah nilai kartu sisa lawan: kartu biasa 1 poin, kartu khusus 10 poin. Contoh: sisa 3 kartu biasa + 2 kartu khusus = 23 poin.</p>
       <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--red hp-btn--small" data-close="modal-rules" data-autofocus>Mengerti</button></div>
@@ -249,9 +258,20 @@
   <!-- Pilih harakat -->
   <div class="hp-modal" id="modal-haraka" hidden>
     <div class="hp-modal__panel hp-modal__panel--small">
-      <h2>Pilih harakat</h2>
+      <h2 id="haraka-title">Pilih harakat</h2>
       <div class="hp-choices" id="haraka-options"></div>
       <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--ghost hp-btn--small" data-cancel style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Batal</button></div>
+    </div>
+  </div>
+
+  <!-- Kuis arti (Haraka Syadid) -->
+  <div class="hp-modal" id="modal-quiz" hidden>
+    <div class="hp-modal__panel hp-modal__panel--small hp-quiz" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
+      <h2 id="quiz-title">Apa arti kata ini?</h2>
+      <div class="hp-quiz__word ar" id="quiz-word"></div>
+      <div class="hp-choices hp-choices--quiz" id="quiz-options"></div>
+      <p class="hp-quiz__voc ar" id="quiz-voc" hidden></p>
+      <div class="hp-modal__actions"><button type="button" class="hp-btn hp-btn--ghost hp-btn--small" id="quiz-skip" style="color:#334155;--b:#e2e8f0;--bd:#cbd5e1">Lewati</button></div>
     </div>
   </div>
 
@@ -277,6 +297,7 @@
   </div>
 
   <script src="js/data/kata.js"></script>
+  <script src="js/data/kosakata.js"></script>
   <script src="js/config.js"></script>
   <script src="js/game/deck.js"></script>
   <script src="js/game/turn-manager.js"></script>

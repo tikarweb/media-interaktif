@@ -167,3 +167,52 @@ Dibunyikan saat sebuah kata selesai dirangkai. Nama file = id kata.
 - [ ] `faala.mp3`  فَعَلَ  (melakukan)
 - [ ] `hasuna.mp3`  حَسُنَ  (menjadi baik, bagus)
 
+## C. Kosakata Haraka Syadid (folder `audio/kata/`)
+
+Dibunyikan saat kartu kata dimainkan dan di jendela kuis setelah memilih jawaban. Ucapkan kata DENGAN harakat lengkap (lihat kolom berharakat). Nama file = id kata.
+
+### Tema 1 — Sekolah
+
+- [ ] `katib.mp3`  كَاتِب  (penulis)
+- [ ] `thalib.mp3`  طَالِب  (pelajar)
+- [ ] `najih.mp3`  نَاجِح  (yang lulus)
+- [ ] `maktub.mp3`  مَكْتُوب  (yang tertulis)
+- [ ] `maftuh.mp3`  مَفْتُوح  (yang terbuka)
+- [ ] `mafhum.mp3`  مَفْهُوم  (yang dipahami)
+- [ ] `maktab.mp3`  مَكْتَب  (kantor / meja tulis)
+- [ ] `maqad.mp3`  مَقْعَد  (tempat duduk)
+- [ ] `malab.mp3`  مَلْعَب  (lapangan)
+- [ ] `aqlam.mp3`  أَقْلَام  (pena-pena)
+- [ ] `awraq.mp3`  أَوْرَاق  (kertas-kertas)
+- [ ] `abwab.mp3`  أَبْوَاب  (pintu-pintu)
+
+### Tema 2 — Rumah & Dapur
+
+- [ ] `sakin.mp3`  سَاكِن  (penghuni)
+- [ ] `thabikh.mp3`  طَابِخ  (juru masak)
+- [ ] `khadim.mp3`  خَادِم  (pelayan)
+- [ ] `mathbukh.mp3`  مَطْبُوخ  (yang dimasak)
+- [ ] `maghsul.mp3`  مَغْسُول  (yang dicuci)
+- [ ] `masyrub.mp3`  مَشْرُوب  (yang diminum)
+- [ ] `mathbakh.mp3`  مَطْبَخ  (dapur)
+- [ ] `maghsal.mp3`  مَغْسَل  (tempat mencuci)
+- [ ] `maskan.mp3`  مَسْكَن  (tempat tinggal)
+- [ ] `athbaq.mp3`  أَطْبَاق  (piring-piring)
+- [ ] `akwab.mp3`  أَكْوَاب  (gelas-gelas)
+- [ ] `aqfal.mp3`  أَقْفَال  (kunci-kunci)
+
+### Tema 3 — Kota & Perjalanan
+
+- [ ] `saiq.mp3`  سَائِق  (sopir)
+- [ ] `rakib.mp3`  رَاكِب  (penumpang)
+- [ ] `zair.mp3`  زَائِر  (pengunjung)
+- [ ] `masyhur.mp3`  مَشْهُور  (yang terkenal)
+- [ ] `maruf.mp3`  مَعْرُوف  (yang dikenal)
+- [ ] `maqshud.mp3`  مَقْصُود  (yang dituju)
+- [ ] `mathham.mp3`  مَطْعَم  (restoran)
+- [ ] `mashna.mp3`  مَصْنَع  (pabrik)
+- [ ] `makhbaz.mp3`  مَخْبَز  (toko roti)
+- [ ] `aswaq.mp3`  أَسْوَاق  (pasar-pasar)
+- [ ] `anhar.mp3`  أَنْهَار  (sungai-sungai)
+- [ ] `asfar.mp3`  أَسْفَار  (perjalanan-perjalanan)
+

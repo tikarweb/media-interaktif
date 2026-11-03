@@ -9,12 +9,12 @@
    ===================================================== */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('./data/kata'));
+    module.exports = factory(require('./data/kata'), require('./data/kosakata'));
   } else {
     var HP = (root.HarakaPlay = root.HarakaPlay || {});
-    HP.config = factory(HP.kataData);      // js/data/kata.js harus dimuat lebih dulu
+    HP.config = factory(HP.kataData, HP.kosakataData);   // js/data/kata.js & kosakata.js dimuat lebih dulu
   }
-}(this, function (kataData) {
+}(this, function (kataData, kosaData) {
   'use strict';
 
   // Urutan warna juga dipakai untuk mengurutkan kartu di tangan
@@ -144,14 +144,40 @@
              words: p.kata.slice(), syllables: syllables, letters: letters, harakat: harakat };
   });
 
+  // ===== TEMA KOSAKATA (Mode Haraka Syadid: Arab Gundul) =====
+  // Dibangun dari js/data/kosakata.js. Satu kartu = satu kata gundul.
+  // Pada kartu Syadid, kolom `haraka` berisi ID POLA kata (faail/mafuul/mafal/afaal),
+  // sehingga aturan "warna sama ATAU pola sama" memakai mesin yang sama dengan Asasi/Iqlab.
+  var POLAS = (kosaData && kosaData.POLA) || [];
+  var VOCAB = ((kosaData && kosaData.KOSAKATA) || []).map(function (v) {
+    return { id: v.id, arab: v.arab, voc: v.voc || v.arab, arti: v.arti, pola: v.pola };
+  });
+  var VOCAB_BY_ID = {};
+  VOCAB.forEach(function (v) { VOCAB_BY_ID[v.id] = v; });
+  var POLA_BY_ID = {};
+  POLAS.forEach(function (p) { POLA_BY_ID[p.id] = p; });
+
+  var THEMES = ((kosaData && kosaData.TEMA) || []).map(function (t, i) {
+    var polas = [];
+    t.kata.forEach(function (vid) {
+      var v = VOCAB_BY_ID[vid];
+      if (!v) throw new Error('Tema ' + t.id + ' merujuk kata yang tidak ada: ' + vid);
+      if (!POLA_BY_ID[v.pola]) throw new Error('Kata ' + vid + ' memakai pola tak dikenal: ' + v.pola);
+      if (polas.indexOf(v.pola) < 0) polas.push(v.pola);
+    });
+    // harakat = daftar pola (dipakai kartu "Ganti Pola" dan bot)
+    return { id: t.id, mode: 'syadid', name: 'Tema ' + (i + 1), title: t.judul,
+             vocab: t.kata.slice(), polas: polas, harakat: polas, letters: [] };
+  });
+
   // ===== TIGA MODE =====
   var MODES = [
     { id: 'asasi',  name: 'Haraka Asasi',  ar: 'أَسَاسِي', tag: 'Pemula',   desc: 'Huruf hijaiyah + harakat, dengan bantuan cara baca Latin',
       showLatin: true,  available: true,  levels: LEVELS },
     { id: 'iqlab',  name: 'Haraka Iqlab',  ar: 'إِقْلَاب', tag: 'Menengah', desc: 'Rangkai kata berharakat, tanpa bantuan Latin',
       showLatin: false, available: true,  levels: PACKS },
-    { id: 'syadid', name: 'Haraka Syadid', ar: 'شَدِيد',   tag: 'Mahir',    desc: 'Arab gundul & kosakata tematik',
-      showLatin: false, available: false, levels: [] }
+    { id: 'syadid', name: 'Haraka Syadid', ar: 'شَدِيد',   tag: 'Mahir',    desc: 'Kata Arab gundul bertema, cocokkan warna atau pola kata, jawab kuis arti',
+      showLatin: false, available: true,  levels: THEMES }
   ];
 
   // Istilah antarmuka (Arab + Indonesia). Ubah di sini bila perlu.
@@ -160,7 +186,8 @@
     turn:   { ar: 'نَوْبَة',    id: 'Giliran' },
     waahid: { ar: 'وَاحِد !',   id: 'Waahid!' },
     catch:  { ar: 'أَمْسِكْ !', id: 'Tangkap!' },
-    word:   { ar: 'الْكَلِمَة', id: 'Target Kata' }
+    word:   { ar: 'الْكَلِمَة', id: 'Target Kata' },
+    pola:   { ar: 'الْوَزْن',   id: 'Pola' }
   };
 
   var CONFIG = {
@@ -169,6 +196,9 @@
     LETTERS: LETTERS,
     LEVELS: LEVELS,
     PACKS: PACKS,
+    THEMES: THEMES,
+    POLAS: POLAS,
+    VOCAB: VOCAB,
     WORDS: WORDS,
     MODES: MODES,
     UI: UI,
@@ -189,7 +219,9 @@
   CONFIG.colorById = byId(COLORS);
   CONFIG.harakaById = byId(HARAKAT);
   CONFIG.letterById = byId(LETTERS);
-  CONFIG.levelById = byId(LEVELS.concat(PACKS));
+  CONFIG.levelById = byId(LEVELS.concat(PACKS, THEMES));
+  CONFIG.vocabById = VOCAB_BY_ID;
+  CONFIG.polaById = POLA_BY_ID;
   CONFIG.wordById = WORD_BY_ID;
   CONFIG.modeById = byId(MODES);
 

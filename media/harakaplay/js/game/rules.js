@@ -44,5 +44,19 @@
     return false;
   }
 
-  return { isPlayable: isPlayable, needsChoice: needsChoice, isValidChoice: isValidChoice };
+  // Mode Syadid: 3 pilihan arti untuk kuis sebelum kartu kata dimainkan.
+  // Jawaban benar + 2 pengecoh dari tema yang sama, urutan diacak.
+  // Mengembalikan [{ id: <id kata>, arti }]; jawaban dikirim sebagai id kata.
+  function quizOptions(vocabId, levelId, rng) {
+    var level = config.getLevel(levelId);
+    var right = config.vocabById[vocabId];
+    if (!right) return [];
+    var pool = (level.vocab || []).filter(function (id) {
+      return id !== vocabId && config.vocabById[id].arti !== right.arti;
+    });
+    var picks = deck.shuffle(pool, rng).slice(0, 2).concat([vocabId]);
+    return deck.shuffle(picks, rng).map(function (id) { return { id: id, arti: config.vocabById[id].arti }; });
+  }
+
+  return { isPlayable: isPlayable, needsChoice: needsChoice, isValidChoice: isValidChoice, quizOptions: quizOptions };
 }));

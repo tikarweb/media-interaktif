@@ -55,6 +55,8 @@ export function createCore({ store, engine, random = Math.random }) {
       target: v.target,
       wordsDone: v.wordsDone,
       wordsBy: v.wordsBy,
+      quizBy: v.quizBy,
+      quizMissed: v.quizMissed,
       phase: v.phase,
       players: v.players.map((p) => ({ id: p.id, name: p.name, handCount: p.handCount })),
       turnPlayerId: v.turnPlayerId,
@@ -70,7 +72,8 @@ export function createCore({ store, engine, random = Math.random }) {
         const out = { type: e.type, playerId: e.playerId };
         if (e.type === 'play') out.card = e.card;          // kartu yang dimainkan memang terbuka
         if (e.type === 'win') out.roundScore = e.roundScore;
-        if (e.type === 'wordComplete' || e.type === 'slot' || e.type === 'bonus') out.wordId = e.wordId;
+        if (e.type === 'wordComplete' || e.type === 'slot' || e.type === 'bonus' ||
+            e.type === 'quizOk' || e.type === 'quizWrong') out.wordId = e.wordId;
         if (e.type === 'slot') out.index = e.index;
         if (e.type === 'bonus' || e.type === 'caught') out.count = e.count;
         if (e.type === 'caught') out.byId = e.byId;
@@ -198,6 +201,7 @@ export function createCore({ store, engine, random = Math.random }) {
     if (type === 'play') {
       action.cardId = String(req.cardId == null ? '' : req.cardId).slice(0, 40);
       if (req.choice != null) action.choice = String(req.choice).slice(0, 20);
+      if (req.answer != null) action.answer = String(req.answer).slice(0, 40);
     }
     const r = GS.applyAction(sec.state, action);
     if (!r.ok) return fail(r.code, r.message, r.needs ? { needs: r.needs } : undefined);

@@ -139,6 +139,17 @@
     if (!game || game.phase !== 'playing') return;
     var r = GS.applyAction(game, { type: 'play', playerId: HUMAN, cardId: card.id });
     if (r.ok) { applyOk(r); return; }
+    if (r.code === 'need_quiz') {
+      // Syadid: kuis arti dulu. Lewati/batal -> tidak ada perubahan.
+      busy = true;
+      dialogs.askQuiz(card.word, game.level).then(function (ans) {
+        busy = false;
+        if (!ans) return;
+        var r3 = dispatch({ type: 'play', playerId: HUMAN, cardId: card.id, answer: ans });
+        if (!r3.ok) dialogs.toast(r3.message, 'warn');
+      });
+      return;
+    }
     if (r.code === 'need_choice') {
       busy = true;
       var ask = r.needs === 'haraka' ? dialogs.chooseHaraka(game.level) : dialogs.chooseColor();
@@ -216,6 +227,7 @@
     var rnames = {};
     game.players.forEach(function (p) { rnames[p.id] = p.name; });
     HP.wordUI.renderResultWords(game.mode === 'iqlab' ? game.wordsDone : [], rnames, HUMAN);
+    HP.wordUI.renderQuizReview(game.mode === 'syadid' ? game : null, rnames, HUMAN);
     var nxt = HP.levelsUI.nextOf(game.level);
     $('btn-next-level').hidden = !nxt;
     $('btn-next-level').disabled = false;
@@ -267,16 +279,22 @@
     bindModes();
     $('btn-practice').addEventListener('click', function () {
       HP.levelsUI.fill($('setup-level'));
-      $('setup-level').parentNode.firstElementChild.textContent = HP.levelsUI.noun() + ' ' + (HP.levelsUI.getMode() === 'iqlab' ? 'kata' : 'belajar');
+      $('setup-level').parentNode.firstElementChild.textContent = HP.levelsUI.nounLabel();
       $('setup-mode').textContent = HP.config.getMode(HP.levelsUI.getMode()).name;
       show('setup'); $('player-name').focus();
     });
     $('btn-online').addEventListener('click', function () {
       HP.levelsUI.fill($('lobby-level'));
-      $('lobby-level-box').firstElementChild.textContent = HP.levelsUI.noun() + ' ' + (HP.levelsUI.getMode() === 'iqlab' ? 'kata' : 'belajar');
+      $('lobby-level-box').firstElementChild.textContent = HP.levelsUI.nounLabel();
       if (HP.online) HP.online.open(); else dialogs.openModal('modal-online');
     });
     $('waahid-btn').addEventListener('click', onWaahid);
+    $('hint-pola-btn').addEventListener('click', function () {
+      var on = !document.body.classList.contains('show-pola');
+      document.body.classList.toggle('show-pola', on);
+      this.setAttribute('aria-pressed', on ? 'true' : 'false');
+      this.textContent = on ? '💡 Petunjuk pola: nyala' : '💡 Petunjuk pola';
+    });
     $('word-pop').addEventListener('click', HP.wordUI.hidePop);
     $('btn-rules').addEventListener('click', function () { dialogs.openModal('modal-rules'); });
     $('btn-rules-game').addEventListener('click', function () { dialogs.openModal('modal-rules'); });

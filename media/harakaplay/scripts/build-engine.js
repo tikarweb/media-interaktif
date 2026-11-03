@@ -7,6 +7,7 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const files = [
   ['kata', 'js/data/kata.js'],
+  ['kosakata', 'js/data/kosakata.js'],
   ['config', 'js/config.js'],
   ['deck', 'js/game/deck.js'],
   ['turn-manager', 'js/game/turn-manager.js'],

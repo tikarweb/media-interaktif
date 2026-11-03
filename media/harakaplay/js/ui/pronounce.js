@@ -45,6 +45,7 @@
 
   function play(card) {
     if (!card || card.type !== 'normal') return;
+    if (card.word) { playWord(card.word); return; }     // Syadid: ucapkan kata utuh
     var name = syllableName(card.letter, card.haraka);
     if (!has(manifest.huruf, name)) return;
     playFile('audio/huruf/' + name + '.mp3');

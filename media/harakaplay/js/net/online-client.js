@@ -124,6 +124,8 @@
       target: pub.target || null,
       wordsBy: pub.wordsBy || {},
       wordsDone: pub.wordsDone || [],
+      quizBy: pub.quizBy || {},
+      quizMissed: pub.quizMissed || [],
       phase: pub.phase,
       me: { id: meId, name: me, hand: snap.hand },
       players: pub.players.map(function (p) {

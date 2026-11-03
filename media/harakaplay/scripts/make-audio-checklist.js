@@ -49,5 +49,16 @@ config.PACKS.forEach((p) => {
   });
   md += '\n';
 });
+md += '## C. Kosakata Haraka Syadid (folder `audio/kata/`)\n\n' +
+  'Dibunyikan saat kartu kata dimainkan dan di jendela kuis setelah memilih jawaban. ' +
+  'Ucapkan kata DENGAN harakat lengkap (lihat kolom berharakat). Nama file = id kata.\n\n';
+config.THEMES.forEach((t) => {
+  md += '### ' + t.name + ' — ' + t.title + '\n\n';
+  t.vocab.forEach((vid) => {
+    const v = config.vocabById[vid];
+    md += '- [ ] `' + v.id + '.mp3`  ' + v.voc + '  (' + v.arti + ')\n';
+  });
+  md += '\n';
+});
 fs.writeFileSync(path.join(root, 'audio', 'CEKLIS-AUDIO.md'), md);
-console.log('CEKLIS-AUDIO.md dibuat: ' + doneLetters.size + ' suku kata + ' + config.WORDS.length + ' kata');
+console.log('CEKLIS-AUDIO.md dibuat: ' + doneLetters.size + ' suku kata + ' + config.WORDS.length + ' kata Iqlab + ' + config.VOCAB.length + ' kata Syadid');

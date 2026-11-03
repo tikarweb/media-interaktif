@@ -33,7 +33,16 @@
     //  - Asasi: semua huruf x semua harakat level
     //  - Iqlab (paket kata): suku kata unik dari kata-kata paket
     var syllables = level.syllables;
-    if (!syllables) {
+    if (level.vocab) {
+      // Syadid: satu kata gundul per kartu; `haraka` = id pola kata
+      config.COLORS.forEach(function (color) {
+        level.vocab.forEach(function (wid) {
+          cards.push({ id: 'n-' + color.id + '-' + wid, type: TYPES.NORMAL, color: color.id,
+                       word: wid, haraka: config.vocabById[wid].pola });
+        });
+      });
+      syllables = [];
+    } else if (!syllables) {
       syllables = [];
       level.letters.forEach(function (letterId) {
         level.harakat.forEach(function (harakaId) { syllables.push({ letter: letterId, haraka: harakaId }); });

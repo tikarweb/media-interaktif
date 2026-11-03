@@ -29,6 +29,9 @@
       var ar = level.words.map(function (id) { return config.wordById[id].arab; }).join('  ');
       return level.name + '  ·  ' + level.title + '  (' + level.words.length + ' kata)';
     }
+    if (level.mode === 'syadid') {
+      return level.name + '  ·  ' + level.title + '  (' + level.vocab.length + ' kata)';
+    }
     var isTanwin = level.harakat.indexOf('fathatain') >= 0;
     var letters = level.letters.map(function (id) { return config.letterById[id].ch; }).join(' ');
     return level.name + '  ·  ' + letters + (isTanwin ? '  (tanwin)' : '');
@@ -63,7 +66,15 @@
   }
 
   // Kata untuk label: "Level" di Asasi, "Paket" di Iqlab
-  function noun(modeId) { return (modeId || mode) === 'iqlab' ? 'Paket' : 'Level'; }
+  function noun(modeId) {
+    var m = modeId || mode;
+    return m === 'iqlab' ? 'Paket' : (m === 'syadid' ? 'Tema' : 'Level');
+  }
+  // Teks label dropdown: "Level belajar" / "Paket kata" / "Tema kosakata"
+  function nounLabel(modeId) {
+    var m = modeId || mode;
+    return noun(m) + ' ' + (m === 'iqlab' ? 'kata' : (m === 'syadid' ? 'kosakata' : 'belajar'));
+  }
 
   // Level berikutnya dalam mode yang sama
   function nextOf(levelId) {
@@ -73,7 +84,7 @@
   }
 
   HP.levelsUI = {
-    fill: fill, noun: noun, label: label, nextOf: nextOf, remembered: remembered, remember: remember,
+    fill: fill, noun: noun, nounLabel: nounLabel, label: label, nextOf: nextOf, remembered: remembered, remember: remember,
     getMode: getMode, setMode: setMode, loadMode: loadMode, list: list
   };
 }());

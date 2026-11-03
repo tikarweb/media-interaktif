@@ -64,6 +64,8 @@
         if (bonus) bt = (bonus.playerId === meId ? 'Kamu' : (names[bonus.playerId] || 'Pemain')) + ' ambil ' + bonus.count + ' kartu (bonus).';
         showWordPop(e.wordId, who, bt);
       }
+      else if (e.type === 'quizOk') HP.dialogs.toast(who + ' menjawab benar \u2705', 'good');
+      else if (e.type === 'quizWrong') HP.dialogs.toast(who + ' salah menjawab, ambil 1 kartu dan giliran berpindah', 'warn');
       else if (e.type === 'waahid') HP.dialogs.toast(who + ': ' + config.UI.waahid.ar + ' (' + config.UI.waahid.id + ')', 'good');
       else if (e.type === 'caught') {
         var by = e.byId === meId ? 'Kamu' : (names[e.byId] || 'Pemain');
@@ -77,6 +79,7 @@
     var box = $('result-words');
     if (!done || !done.length) { box.hidden = true; return; }
     box.hidden = false;
+    box.querySelector('h3').textContent = 'Kata yang berhasil dirangkai';
     var note = $('result-words-note');
     if (!note) {
       note = document.createElement('p');
@@ -110,5 +113,49 @@
     });
   }
 
-  HP.wordUI = { renderResultWords: renderResultWords, renderPanel: renderPanel, showWordPop: showWordPop, hidePop: hidePop, announce: announce };
+  // Layar hasil Syadid: skor kuis + kata yang salah dijawab (untuk diulang). state = engine state / public state.
+  function renderQuizReview(st, names, meId) {
+    if (!st) return;
+    var box = $('result-words');
+    box.hidden = false;
+    box.querySelector('h3').textContent = 'Kuis arti kata';
+    var note = $('result-words-note');
+    if (!note) {
+      note = document.createElement('p');
+      note.id = 'result-words-note';
+      note.className = 'hp-rw__note';
+      box.insertBefore(note, $('result-words-list'));
+    }
+    var by = st.quizBy || {};
+    var parts = Object.keys(by).map(function (id) {
+      var who = id === meId ? 'Kamu' : (names[id] || 'Pemain');
+      return who + ': ' + by[id].ok + ' benar, ' + by[id].no + ' salah';
+    });
+    var missed = st.quizMissed || [];
+    note.textContent = parts.join('  \u2022  ') + (missed.length ? '.  Kata di bawah perlu diulang:' : '.  Tidak ada yang salah. Hebat!');
+    var ul = $('result-words-list');
+    ul.innerHTML = '';
+    var seen = {};
+    missed.forEach(function (m) {
+      var v = config.vocabById[m.wordId];
+      if (!v) return;
+      var li = document.createElement('li');
+      li.className = 'hp-rw';
+      var ar = document.createElement('span');
+      ar.className = 'ar hp-rw__ar';
+      ar.textContent = v.voc;
+      var arti = document.createElement('span');
+      arti.className = 'hp-rw__arti';
+      arti.textContent = v.arti + '  (' + config.polaById[v.pola].nama + ')';
+      var who = m.by === meId ? 'kamu' : (names[m.by] || 'Pemain');
+      var tag = document.createElement('span');
+      tag.className = 'hp-rw__by' + (m.by === meId ? ' is-me' : '');
+      tag.textContent = '\u274c ' + who;
+      tag.title = 'Salah dijawab oleh ' + who;
+      li.appendChild(ar); li.appendChild(arti); li.appendChild(tag);
+      ul.appendChild(li);
+    });
+  }
+
+  HP.wordUI = { renderQuizReview: renderQuizReview, renderResultWords: renderResultWords, renderPanel: renderPanel, showWordPop: showWordPop, hidePop: hidePop, announce: announce };
 }());
