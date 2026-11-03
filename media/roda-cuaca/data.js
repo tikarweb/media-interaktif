@@ -5,12 +5,13 @@
    Satu "materi" (set) = satu isi roda lengkap: judul, tiga
    kalimat pemandu, dan petak-petaknya. Tambahkan materi baru
    dengan menyalin satu blok { ... } di dalam WHEEL_SETS.
-   Kalau ada lebih dari satu materi, di pojok kiri atas panggung
-   otomatis muncul menu "Materi" untuk berganti.
+   Setiap materi tampil sebagai SATU KARTU di layar "Pilih Tema".
+   Materi baru otomatis ikut muncul sebagai kartu baru.
 
    Tiap materi punya:
      id        : nama pendek tanpa spasi (dipakai di link, lihat bawah)
-     menu      : nama yang tampil di menu pilihan
+     menu      : nama yang tampil di kartu tema (bahasa Indonesia)
+     ikon      : emoji untuk kartu tema
      titleAr   : judul Arab di atas
      titleId   : judul Indonesia (label biru)
      prompts   : tiga kalimat pemandu di sekeliling roda
@@ -27,8 +28,8 @@
 
    LINK LANGSUNG KE MATERI TERTENTU
      media/roda-cuaca/index.html?set=cuaca
-   Berguna untuk membuat kartu terpisah di beranda (media-list.js)
-   atau untuk dibagikan ke siswa.
+   Tanpa "?set=" yang tampil adalah layar Pilih Tema.
+   Berguna untuk dibagikan ke siswa langsung ke satu tema.
 
    TIPS
      - Tulis harakat selengkap mungkin; font sudah mendukung.
@@ -44,6 +45,7 @@ const WHEEL_SETS = [
   {
     id: 'cuaca',
     menu: 'Kondisi Cuaca',
+    ikon: '🌦️',
     titleAr: 'حَالَةُ الطَّقْسِ',
     titleId: 'Kondisi Cuaca',
     prompts: {
@@ -85,6 +87,7 @@ const WHEEL_SETS = [
   {
     id: 'contoh',
     menu: 'Nama Materi',
+    ikon: '⭐',
     titleAr: 'عُنْوَانٌ',
     titleId: 'Judul Materi',
     prompts: {
@@ -100,4 +103,21 @@ const WHEEL_SETS = [
     ]
   }
   ------------------------------------------------------------------------- */
+];
+
+/* =====================================================
+   TEMA YANG AKAN DATANG (kartu "Segera" di layar Pilih Tema)
+   Ini hanya penanda tempat, belum bisa dibuka. Hapus atau ganti
+   sesukamu. Kalau temanya sudah siap, buat blok materi di
+   WHEEL_SETS di atas, lalu hapus baris yang sama di sini.
+     menu   : nama Indonesia
+     titleAr: nama Arab
+     ikon   : emoji
+     color / light : warna kartu
+   ===================================================== */
+const WHEEL_SOON = [
+  { menu: 'Keluarga',  titleAr: 'الْأُسْرَةُ',      ikon: '👨‍👩‍👧', color: '#fcd34d', light: '#fff7c2' },
+  { menu: 'Warna',     titleAr: 'الْأَلْوَانُ',     ikon: '🎨', color: '#b784f5', light: '#ecdcff' },
+  { menu: 'Makanan',   titleAr: 'الطَّعَامُ',      ikon: '🍎', color: '#6ee7a1', light: '#d9fbe5' },
+  { menu: 'Hewan',     titleAr: 'الْحَيَوَانَاتُ', ikon: '🐘', color: '#fdba74', light: '#ffedd5' }
 ];

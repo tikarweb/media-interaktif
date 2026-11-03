@@ -4,23 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roda Putar Cuaca Bahasa Arab Interaktif</title>
+    <title>Roda Putar Bahasa Arab</title>
     <link rel="stylesheet" href="../../assets/css/fonts.css">
-
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="rc-body">
 
-    <!-- Latar roda: matahari, pelangi, awan, bukit -->
-    <div class="page-bg page-bg--scene" aria-hidden="true">
-        <div class="scene-sun"></div>
-        <div class="scene-rainbow"></div>
-        <span class="cloud cloud--1"></span>
-        <span class="cloud cloud--2"></span>
-        <span class="cloud cloud--3"></span>
-        <svg class="scene-hills" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <!-- Latar: langit, matahari, pelangi, awan melayang, bukit (semuanya dekoratif) -->
+    <div class="rc-bg" aria-hidden="true">
+        <div class="rc-sun"></div>
+        <div class="rc-rainbow"></div>
+        <span class="rc-cloud rc-cloud--1"></span>
+        <span class="rc-cloud rc-cloud--2"></span>
+        <span class="rc-cloud rc-cloud--3"></span>
+        <span class="rc-cloud rc-cloud--4"></span>
+        <svg class="rc-hills" viewBox="0 0 1440 320" preserveAspectRatio="none">
             <path fill="#b5e8a9" d="M0,190 C240,110 480,250 720,180 C960,110 1200,230 1440,160 L1440,320 L0,320Z" />
             <path fill="#86d68a" d="M0,245 C300,175 540,295 840,235 C1080,185 1260,265 1440,225 L1440,320 L0,320Z" />
             <path fill="#52b96e" d="M0,288 C360,238 700,318 1000,278 C1200,252 1340,288 1440,268 L1440,320 L0,320Z" />
@@ -29,42 +29,58 @@
 
     <a class="btn-back" href="../../index.html">← Beranda</a>
 
-    <header class="page-header">
-        <h1>
-            <span class="title-ar" id="titleAr">حَالَةُ الطَّقْسِ</span>
-            <span class="title-id" id="titleId">Kondisi Cuaca</span>
-        </h1>
-    </header>
+    <!-- ================= LAYAR 1: PILIH TEMA ================= -->
+    <section class="rc-view" id="viewPicker">
+        <header class="rc-head">
+            <h1>
+                <span class="title-ar">الْعَجَلَةُ الدَّوَّارَةُ</span>
+                <span class="title-id">Roda Putar</span>
+            </h1>
+            <p class="rc-lead">Pilih tema, lalu putar rodanya!</p>
+        </header>
+        <div class="rc-themes" id="themeGrid"></div>
+    </section>
 
-    <div class="stage-wrap">
+    <!-- ================= LAYAR 2: RODA ================= -->
+    <section class="rc-view" id="viewWheel" hidden>
+        <header class="rc-head">
+            <h1>
+                <span class="title-ar" id="titleAr">حَالَةُ الطَّقْسِ</span>
+                <span class="title-id" id="titleId">Kondisi Cuaca</span>
+            </h1>
+        </header>
+
+        <div class="rc-toolbar">
+            <button type="button" class="rc-pill" id="themeBtn">☰ Pilih Tema</button>
+        </div>
+
         <main class="stage">
-            <!-- Menu ganti materi: muncul otomatis kalau ada lebih dari satu materi di data.js -->
-            <label class="set-picker" id="setPicker" hidden>
-                <span>Materi</span>
-                <select id="setSelect"></select>
-            </label>
+            <div class="arrow-item arrow-center">
+                <span class="arrow-bubble" id="promptCenter">اليَوْمَ الطَّالِبُ...</span>
+                <span class="arrow-pointer"></span>
+            </div>
 
             <div class="arrow-item arrow-left">
                 <span class="arrow-bubble" id="promptLeft">أَمْسِ كَانَ الطَّالِبُ...</span>
-                <span class="arrow-pointer">▼</span>
-            </div>
-            <div class="arrow-item arrow-center">
-                <span class="arrow-bubble" id="promptCenter">اليَوْمَ الطَّالِبُ...</span>
-                <span class="arrow-pointer">▼</span>
-            </div>
-            <div class="arrow-item arrow-right">
-                <span class="arrow-pointer">▼</span>
-                <span class="arrow-bubble" id="promptRight">غَدًا سَيَـ...</span>
+                <span class="arrow-pointer"></span>
             </div>
 
-            <div class="wheel-container">
-                <canvas id="wheelCanvas" class="wheel-canvas" width="800" height="800"></canvas>
+            <div class="wheel-wrap">
+                <div class="wheel-container" id="wheelBox">
+                    <canvas id="wheelCanvas" class="wheel-canvas" width="1200" height="1200"></canvas>
+                </div>
+                <div class="wheel-center-dot"></div>
             </div>
-            <div class="wheel-center-dot"></div>
 
-            <button class="btn-spin-wheel" id="spinBtn">PUTAR RODA 🔄</button>
+            <div class="side-right">
+                <div class="arrow-item arrow-right">
+                    <span class="arrow-pointer"></span>
+                    <span class="arrow-bubble" id="promptRight">غَدًا سَيَـ...</span>
+                </div>
+                <button class="btn-spin-wheel" id="spinBtn" type="button">PUTAR RODA 🔄</button>
+            </div>
         </main>
-    </div>
+    </section>
 
     <script src="data.js"></script>
     <script src="script.js"></script>

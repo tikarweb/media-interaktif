@@ -13,6 +13,10 @@ const ctx = canvas.getContext('2d');
 const spinBtn = document.getElementById('spinBtn');
 const wheelContainer = document.querySelector('.wheel-container');
 
+// Kanvas digambar dengan resolusi 1,5x (1200 px) agar tetap tajam di layar HP.
+// Semua ukuran di bawah tetap dalam satuan 800 x 800 (diskalakan otomatis).
+const RES = 1.5;
+
 // Materi yang sedang tampil
 let currentSet = null;
 let sectors = [];
@@ -80,6 +84,7 @@ function drawWheel(currentRotationAngle = 0) {
   const cy = 400;
   const r = LAYOUT.wheelRadius;
 
+  ctx.setTransform(RES, 0, 0, RES, 0, 0);
   ctx.clearRect(0, 0, 800, 800);
   if (!numSectors) return;
 
@@ -266,61 +271,122 @@ function loadFontsThenDraw(set) {
   });
 }
 
-function initSets() {
-  if (typeof WHEEL_SETS === 'undefined' || !WHEEL_SETS.length) return;
+/* ---------- Layar: Pilih Tema <-> Roda ---------- */
+const viewPicker = document.getElementById('viewPicker');
+const viewWheel = document.getElementById('viewWheel');
 
-  // Materi awal: dari link (?set=cuaca) atau yang pertama
-  let first = WHEEL_SETS[0];
-  try {
-    const wanted = new URLSearchParams(window.location.search).get('set');
-    const found = WHEEL_SETS.find(s => s.id === wanted);
-    if (found) first = found;
-  } catch (e) {}
+function showPicker(push) {
+  viewWheel.hidden = true;
+  viewPicker.hidden = false;
+  document.title = 'Roda Putar Bahasa Arab';
+  if (push) { try { history.pushState({}, '', window.location.pathname); } catch (e) {} }
+  window.scrollTo(0, 0);
+}
 
-  // Menu pilihan muncul hanya kalau ada lebih dari satu materi
-  const picker = document.getElementById('setPicker');
-  const select = document.getElementById('setSelect');
-  if (picker && select && WHEEL_SETS.length > 1) {
-    WHEEL_SETS.forEach(function (s) {
-      const opt = document.createElement('option');
-      opt.value = s.id;
-      opt.textContent = s.menu || s.titleId || s.id;
-      select.appendChild(opt);
-    });
-    select.value = first.id;
-    picker.hidden = false;
-    select.addEventListener('change', function () {
-      if (isSpinning) { select.value = currentSet.id; return; }
-      const next = WHEEL_SETS.find(s => s.id === select.value);
-      if (next) applySet(next);
-    });
+function showWheel(set, push) {
+  viewPicker.hidden = true;
+  viewWheel.hidden = false;
+  applySet(set);
+  if (push) { try { history.pushState({ set: set.id }, '', '?set=' + encodeURIComponent(set.id)); } catch (e) {} }
+  window.scrollTo(0, 0);
+}
+
+function buildThemeCards() {
+  const grid = document.getElementById('themeGrid');
+  grid.innerHTML = '';
+  let i = 0;
+
+  function card(opts) {
+    const el = document.createElement(opts.soon ? 'div' : 'button');
+    if (!opts.soon) el.type = 'button';
+    el.className = 'rc-theme' + (opts.soon ? ' is-soon' : '');
+    el.style.setProperty('--c', opts.color);
+    el.style.setProperty('--l', opts.light);
+    el.style.setProperty('--i', i++);
+
+    const icon = document.createElement('span');
+    icon.className = 'rc-theme__icon';
+    icon.textContent = opts.icon;
+    const ar = document.createElement('span');
+    ar.className = 'rc-theme__ar';
+    ar.textContent = opts.ar;
+    const id = document.createElement('span');
+    id.className = 'rc-theme__id';
+    id.textContent = opts.name;
+    const meta = document.createElement('span');
+    meta.className = 'rc-theme__meta';
+    meta.textContent = opts.meta;
+    el.appendChild(icon); el.appendChild(ar); el.appendChild(id); el.appendChild(meta);
+
+    if (opts.soon) {
+      const b = document.createElement('span');
+      b.className = 'rc-theme__badge';
+      b.textContent = 'Segera';
+      el.appendChild(b);
+    }
+    return el;
   }
 
-  applySet(first);
+  WHEEL_SETS.forEach(function (s) {
+    const first = s.sectors[0] || {};
+    const el = card({
+      icon: s.ikon || first.emoji || '🎡',
+      ar: s.titleAr, name: s.menu || s.titleId || s.id,
+      meta: s.sectors.length + ' kata',
+      color: first.color || '#7db8fb', light: first.light || '#dbeafe'
+    });
+    el.addEventListener('click', function () { showWheel(s, true); });
+    grid.appendChild(el);
+  });
+
+  (typeof WHEEL_SOON !== 'undefined' ? WHEEL_SOON : []).forEach(function (s) {
+    grid.appendChild(card({
+      soon: true, icon: s.ikon || '🎡', ar: s.titleAr, name: s.menu, meta: 'Segera hadir',
+      color: s.color || '#cbd5e1', light: s.light || '#f1f5f9'
+    }));
+  });
 }
 
-/* ---------- Pengaturan layar & start ---------- */
-// Ukuran panggung dibaca dari style.css (.stage). Panggung otomatis
-// mengecil di layar kecil dan membesar (maks 1.25x) di layar lebar/proyektor.
-function fitStage() {
-  const wrap = document.querySelector('.stage-wrap');
-  const stage = document.querySelector('.stage');
-  const header = document.querySelector('.page-header');
-  const W = stage.offsetWidth;
-  const H = stage.offsetHeight;
-  const availW = window.innerWidth - 24;
-  const availH = window.innerHeight - header.offsetHeight - 24;
-  const scale = Math.min(1.25, availW / W, availH / H);
-  stage.style.transform = 'scale(' + scale + ')';
-  wrap.style.width = (W * scale) + 'px';
-  wrap.style.height = (H * scale) + 'px';
+function setFromUrl() {
+  try {
+    const wanted = new URLSearchParams(window.location.search).get('set');
+    return WHEEL_SETS.find(function (s) { return s.id === wanted; }) || null;
+  } catch (e) { return null; }
 }
 
-window.addEventListener('resize', fitStage);
+function initSets() {
+  if (typeof WHEEL_SETS === 'undefined' || !WHEEL_SETS.length) return;
+  buildThemeCards();
+  const wanted = setFromUrl();
+  if (wanted) showWheel(wanted, false); else showPicker(false);
 
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    if (isSpinning) return;
+    showPicker(true);
+  });
+  // tombol Kembali / Maju milik browser
+  window.addEventListener('popstate', function () {
+    if (isSpinning) return;
+    const s = setFromUrl();
+    if (s) showWheel(s, false); else showPicker(false);
+  });
+}
+
+/* ---------- Start ---------- */
 window.onload = function () {
   initSets();
-  fitStage();
 };
-spinBtn.addEventListener('click', spin);
-wheelContainer.addEventListener('click', spin);
+
+// Memutar lewat tombol / klik roda. spin() di atas tidak diubah;
+// di sini hanya menandai tombol selama roda berputar.
+function startSpin() {
+  if (isSpinning) return;
+  spin();
+  spinBtn.classList.add('is-busy');
+  (function waitEnd() {
+    if (isSpinning) requestAnimationFrame(waitEnd);
+    else spinBtn.classList.remove('is-busy');
+  }());
+}
+spinBtn.addEventListener('click', startSpin);
+wheelContainer.addEventListener('click', startSpin);

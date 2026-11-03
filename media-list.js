@@ -18,17 +18,17 @@
 const MEDIA_LIST = [
   {
     emoji: '🎡',
-    ar: 'حَالَةُ الطَّقْسِ',
-    title: 'Roda Cuaca',
-    desc: 'Putar roda, lalu buat kalimat tentang cuaca kemarin, hari ini, dan besok.',
+    ar: 'الْعَجَلَةُ الدَّوَّارَةُ',
+    title: 'Roda Putar',
+    desc: 'Putar roda, lalu buat kalimat bahasa Arab sesuai tema. Tema pertama: cuaca kemarin, hari ini, dan besok. Tema lain menyusul!',
     href: 'media/roda-cuaca/index.html',
     status: 'ready'
   },
   {
     emoji: '🃏',
-    ar: 'أُونُو الْهِجَائِيَّة',
+    ar: 'لُعْبَةُ الْحَرَكَاتِ',
     title: 'HarakaPlay',
-    desc: 'Kartu hijaiyah interaktif: Haraka Asasi (huruf & harakat) dan Haraka Iqlab (rangkai kata). Latihan lawan bot atau main online.',
+    desc: 'Game kartu belajar Arab: Haraka Asasi (huruf & harakat), Haraka Iqlab (rangkai kata), dan Haraka Syadid (kosakata Arab gundul + kuis arti). Lawan bot atau main online bareng teman.',
     href: 'media/harakaplay/index.html',
     status: 'ready'
   },

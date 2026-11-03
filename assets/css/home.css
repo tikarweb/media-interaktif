@@ -5,16 +5,17 @@
 .home {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 44px 20px 60px;
+  padding: 56px 16px 40px;
 }
 
 .home-head { text-align: center; margin-bottom: 34px; }
+.home-head h1 { margin: 0; }
 
 .home-ar {
   display: block;
   font-family: var(--font-ar);
   font-weight: 900;
-  font-size: 2.6rem;
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
   line-height: 1.5;
   color: var(--brand);
   -webkit-text-stroke: 7px #fff;
@@ -118,3 +119,145 @@ a.card:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
 
 .card--soon .card-emoji { opacity: 0.55; filter: grayscale(0.4); }
 .card--soon .card-num { background: #94a3b8; }
+
+
+/* =====================================================
+   BERANDA BARU: merek, blok, tentang, statistik, dukungan, kaki
+   ===================================================== */
+.home-brand {
+  display: block;
+  margin: 2px 0 6px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 11vw, 3.8rem);
+  line-height: 1.1;
+  color: var(--brand);
+  -webkit-text-stroke: 7px #fff;
+  paint-order: stroke fill;
+  text-shadow: 0 6px 14px rgba(3, 105, 161, 0.25);
+}
+.home-title { font-size: clamp(0.8rem, 3vw, 1.1rem); }
+.home-lead { margin: 16px auto 0; max-width: 520px; font-size: clamp(1rem, 3.8vw, 1.15rem); font-weight: 500; }
+.home-skip {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 20px;
+  font-weight: 700;
+  color: var(--brand);
+  text-decoration: none;
+  background: #fff;
+  border: 3px solid #38bdf8;
+  border-radius: 999px;
+  box-shadow: 0 6px 14px rgba(3, 105, 161, 0.2);
+  transition: transform 0.15s ease;
+}
+.home-skip:hover { transform: translateY(-2px); }
+.home-skip:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+
+.block { margin-top: 44px; scroll-margin-top: 20px; }
+.block-title {
+  margin: 0 0 16px;
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  text-align: center;
+  color: var(--brand);
+}
+.panel {
+  padding: 26px 22px;
+  background: var(--card);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 3px solid #fff;
+  border-radius: 28px;
+  box-shadow: 0 12px 28px rgba(3, 105, 161, 0.15);
+}
+.panel .block-title { margin-bottom: 12px; }
+
+/* Tentang */
+.about__text { max-width: 640px; margin: 0 auto; text-align: center; }
+.about__text p { margin: 0 0 12px; font-size: 1.05rem; line-height: 1.6; color: #1e293b; user-select: text; }
+
+/* Tombol sosial */
+.social-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 18px; }
+.soc {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--c, var(--brand));
+  border-radius: 999px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.soc svg { width: 20px; height: 20px; flex: none; }
+.soc:hover { transform: translateY(-3px); filter: brightness(1.07); }
+.soc:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+.soc--instagram { --c: #d6249f; }
+.soc--tiktok { --c: #111827; }
+.soc--threads { --c: #1f2937; }
+.soc--youtube { --c: #dc2626; }
+.soc--whatsapp { --c: #16a34a; }
+.social-row--icons .soc { width: 46px; height: 46px; padding: 0; justify-content: center; }
+.social-row--icons .soc svg { width: 22px; height: 22px; }
+
+/* Statistik */
+.stats__total { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+.stats__num { font-size: clamp(2.2rem, 9vw, 3rem); font-weight: 700; line-height: 1.1; color: var(--brand); }
+.stats__lbl { font-weight: 600; color: #475569; }
+.stats__none { margin: 0; text-align: center; color: #64748b; }
+.flags { list-style: none; margin: 0 auto; padding: 0; max-width: 560px; display: grid; gap: 8px; }
+.flag {
+  display: grid;
+  grid-template-columns: 34px minmax(70px, 130px) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.98rem;
+}
+.flag__img { display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; }
+.flag__img img { display: block; border-radius: 3px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); }
+.flag__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flag__bar { height: 12px; background: rgba(3, 105, 161, 0.12); border-radius: 999px; overflow: hidden; }
+.flag__bar i { display: block; height: 100%; background: linear-gradient(90deg, #38bdf8, #0369a1); border-radius: 999px; }
+.flag__n { font-weight: 700; min-width: 3ch; text-align: right; }
+
+/* Dukungan */
+.support__text { max-width: 560px; margin: 0 auto 14px; text-align: center; line-height: 1.6; color: #1e293b; }
+.support__actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; }
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  background: linear-gradient(to bottom, #f472b6, #db2777);
+  border: none;
+  border-bottom: 4px solid #9d174d;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(219, 39, 119, 0.3);
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:focus-visible { outline: 4px solid #fde047; outline-offset: 3px; }
+.btn--small { padding: 6px 16px; font-size: 0.9rem; background: var(--brand); border-bottom-color: #075985; box-shadow: none; }
+.qris { margin: 0; text-align: center; }
+.qris img { display: block; width: min(240px, 70vw); height: auto; background: #fff; padding: 10px; border-radius: 18px; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15); }
+.qris figcaption { margin-top: 6px; font-size: 0.85rem; color: #475569; }
+.rek { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 8px 14px; background: #fff; border-radius: 16px; }
+.rek__text { font-weight: 600; user-select: text; }
+.soon-pill { padding: 5px 18px; font-weight: 700; color: #fff; background: #94a3b8; border-radius: 999px; }
+
+/* Kaki halaman */
+.foot { margin-top: 44px; text-align: center; font-size: 0.9rem; color: #334155; }
+.foot .social-row { margin: 0 0 12px; }
+.foot p { margin: 0; }
+
+@media (max-width: 480px) {
+  .panel { padding: 22px 16px; }
+  .flag { grid-template-columns: 30px minmax(60px, 100px) 1fr auto; gap: 8px; font-size: 0.92rem; }
+  .soc { padding: 8px 13px; font-size: 0.92rem; }
+}
