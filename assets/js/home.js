@@ -172,9 +172,14 @@
     fetch(cfg.endpoint + (hit ? '?hit=1' : ''), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (hit && d && d.ok !== false) { try { sessionStorage.setItem('ta-visit', '1'); } catch (e) {} }
-        renderStats(d);
+        if (hit) { try { sessionStorage.setItem('ta-visit', '1'); } catch (e) {} }
+        if (hit && (!d || d.ok === false)) {
+          // jaga-jaga: kalau panggilan hitung gagal, tetap tampilkan statistik saja
+          return fetch(cfg.endpoint, { cache: 'no-store' }).then(function (r) { return r.json(); });
+        }
+        return d;
       })
+      .then(function (d) { renderStats(d); })
       .catch(function () { renderStats(null); });
   }
 

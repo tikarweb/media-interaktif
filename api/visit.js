@@ -20,7 +20,8 @@ async function rpc(name, body) {
     body: JSON.stringify(body || {})
   });
   if (!res.ok) throw new Error('supabase ' + res.status);
-  return res.json();
+  const text = await res.text();          // fungsi tanpa hasil (hit_visit) membalas kosong
+  return text ? JSON.parse(text) : null;
 }
 
 module.exports = async function handler(req, res) {
