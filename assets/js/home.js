@@ -34,7 +34,8 @@
     MEDIA_LIST.forEach(function (m, i) {
       var isLink = m.href && m.status !== 'soon';
       var card = document.createElement(isLink ? 'a' : 'div');
-      card.className = 'card' + (m.status === 'soon' ? ' card--soon' : '');
+      card.className = 'card reveal' + (m.status === 'soon' ? ' card--soon' : '');
+      card.style.setProperty('--rd', (i % 3) * 0.12 + 's');
       if (isLink) card.href = m.href;
       card.appendChild(el('span', 'card-num', String(i + 1)));
       card.appendChild(el('div', 'card-emoji', m.emoji));
@@ -132,18 +133,26 @@
       return;
     }
     var total = el('div', 'stats__total');
-    total.appendChild(el('span', 'stats__num', nf(data.total)));
+    var numEl = el('span', 'stats__num', nf(data.total));
+    total.appendChild(numEl);
+    countUp(numEl, data.total);
     total.appendChild(el('span', 'stats__lbl', 'kali dikunjungi'));
     box.appendChild(total);
 
     var list = (data.countries || []).slice(0, SITE.stats.topCountries || 8);
     if (!list.length) return;
     var max = list[0].n || 1;
-    var ul = el('ul', 'flags');
+    var ul = el('ul', 'vbars');
     list.forEach(function (c) {
-      var li = el('li', 'flag');
+      var li = el('li', 'vbar');
       var code = String(c.code || 'XX').toUpperCase();
-      var fl = el('span', 'flag__img');
+      li.appendChild(el('span', 'vbar__n', nf(c.n)));
+      var track = el('span', 'vbar__track');
+      var fill = el('i');
+      fill.style.setProperty('--h', Math.max(6, Math.round(100 * c.n / max)) + '%');
+      track.appendChild(fill);
+      li.appendChild(track);
+      var fl = el('span', 'vbar__flag');
       if (code !== 'XX') {
         var img = document.createElement('img');
         img.src = 'https://flagcdn.com/w40/' + code.toLowerCase() + '.png';
@@ -151,13 +160,8 @@
         img.onerror = function () { fl.textContent = code; img.remove(); };
         fl.appendChild(img);
       } else { fl.textContent = '🌐'; }
-      var name = el('span', 'flag__name', regionName(code));
-      var bar = el('span', 'flag__bar');
-      var fill = el('i');
-      fill.style.width = Math.max(4, Math.round(100 * c.n / max)) + '%';
-      bar.appendChild(fill);
-      var n = el('span', 'flag__n', nf(c.n));
-      li.appendChild(fl); li.appendChild(name); li.appendChild(bar); li.appendChild(n);
+      li.appendChild(fl);
+      li.appendChild(el('span', 'vbar__name', regionName(code)));
       ul.appendChild(li);
     });
     box.appendChild(ul);
@@ -183,6 +187,73 @@
       .catch(function () { renderStats(null); });
   }
 
+
+  /* ---------- Gerak: pita kata, muncul saat scroll, parallax ---------- */
+  var REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(node, to) {
+    if (REDUCED || !window.requestAnimationFrame || to < 2) return;
+    var t0 = null, dur = 900;
+    node.textContent = nf(0);
+    function step(t) {
+      if (t0 === null) t0 = t;
+      var p = Math.min(1, (t - t0) / dur);
+      node.textContent = nf(Math.round(to * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(step); else node.textContent = nf(to);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function buildRibbon() {
+    var track = $('ribbonTrack');
+    var words = SITE.words || [
+      ['كِتَابٌ', 'buku'], ['قَلَمٌ', 'pena'], ['مَدْرَسَةٌ', 'sekolah'], ['بَيْتٌ', 'rumah'],
+      ['شَمْسٌ', 'matahari'], ['مَاءٌ', 'air'], ['بَابٌ', 'pintu'], ['مُعَلِّمٌ', 'guru'],
+      ['حَدِيقَةٌ', 'taman'], ['سَيَّارَةٌ', 'mobil']
+    ];
+    if (!track || !words.length) { var r = document.querySelector('.ribbon'); if (r) r.hidden = true; return; }
+    for (var round = 0; round < 2; round++) {          // dua salinan = putaran mulus tanpa putus
+      words.forEach(function (w) {
+        var item = el('span', 'rw');
+        var ar = el('b', '', w[0]); ar.lang = 'ar'; ar.dir = 'rtl';
+        item.appendChild(ar);
+        item.appendChild(el('span', '', w[1]));
+        track.appendChild(item);
+      });
+    }
+  }
+
+  function setupReveal() {
+    var items = document.querySelectorAll('.reveal');
+    if (REDUCED || !('IntersectionObserver' in window)) {
+      for (var i = 0; i < items.length; i++) items[i].classList.add('is-in');
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    for (var j = 0; j < items.length; j++) io.observe(items[j]);
+  }
+
+  // Ilustrasi hero ikut bergeser pelan mengikuti mouse (hanya di perangkat dengan mouse)
+  function setupParallax() {
+    var stage = $('stage');
+    var hero = document.querySelector('.hero');
+    if (!stage || !hero || REDUCED) return;
+    if (!(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches)) return;
+    hero.addEventListener('mousemove', function (e) {
+      var r = hero.getBoundingClientRect();
+      stage.style.setProperty('--mx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+      stage.style.setProperty('--my', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+    });
+    hero.addEventListener('mouseleave', function () {
+      stage.style.setProperty('--mx', 0);
+      stage.style.setProperty('--my', 0);
+    });
+  }
+
   /* ---------- Vercel Web Analytics (dasbor pribadi) ---------- */
   function loadAnalytics() {
     if (!SITE.vercelAnalytics) return;
@@ -194,12 +265,15 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    buildRibbon();
     buildMedia();
     buildAbout();
     buildSocial();
     buildSupport();
     loadStats();
     loadAnalytics();
+    setupReveal();
+    setupParallax();
     $('year').textContent = new Date().getFullYear();
   });
 }());

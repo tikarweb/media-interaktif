@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Titik Arab — Media Interaktif Bahasa Arab</title>
-    <meta name="description"
-        content="Media interaktif belajar bahasa Arab: roda putar dan kartu hijaiyah HarakaPlay. Gratis, bisa dibuka dari HP.">
+    <meta name="description" content="Media interaktif belajar bahasa Arab: roda putar dan kartu hijaiyah HarakaPlay. Gratis, bisa dibuka dari HP.">
     <meta property="og:title" content="Titik Arab — Media Interaktif Bahasa Arab">
-    <meta property="og:description"
-        content="Belajar Arab sambil main: roda putar, kartu hijaiyah, dan lainnya. Gratis!">
+    <meta property="og:description" content="Belajar Arab sambil main: roda putar, kartu hijaiyah, dan lainnya. Gratis!">
     <meta property="og:type" content="website">
+    <meta name="theme-color" content="#0369a1">
+    <script>document.documentElement.classList.add('js');</script>
     <link rel="stylesheet" href="assets/css/fonts.css">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/home.css">
@@ -24,46 +24,147 @@
         <span class="cloud cloud--3"></span>
     </div>
 
-    <main class="home">
+    <!-- ===================== HERO ===================== -->
+    <header class="hero" id="top">
+        <div class="hero__dots" aria-hidden="true"></div>
+        <div class="hero__letters" aria-hidden="true">
+            <span style="--x:6%;--y:68%;--s:3.2rem;--t:19s;--dl:-3s">ا</span>
+            <span style="--x:22%;--y:22%;--s:2.2rem;--t:23s;--dl:-9s">ب</span>
+            <span style="--x:41%;--y:78%;--s:2.8rem;--t:21s;--dl:-14s">ت</span>
+            <span style="--x:58%;--y:12%;--s:3.4rem;--t:26s;--dl:-6s">ث</span>
+            <span style="--x:73%;--y:70%;--s:2.4rem;--t:20s;--dl:-11s">ج</span>
+            <span style="--x:90%;--y:28%;--s:3rem;--t:24s;--dl:-2s">ح</span>
+            <span style="--x:33%;--y:50%;--s:2rem;--t:28s;--dl:-17s">خ</span>
+        </div>
 
-        <!-- ===== Kepala ===== -->
-        <header class="home-head">
-            <h1>
-                <span class="home-ar">وَسَائِلُ تَفَاعُلِيَّة</span>
-                <span class="home-brand">Titik Arab</span>
-                <span class="home-title">Media Interaktif Bahasa Arab</span>
-            </h1>
-            <p class="home-lead">Belajar Arab sambil main. Pilih media di bawah, langsung gas!</p>
-            <a class="home-skip" href="#media">Lihat media ↓</a>
-        </header>
+        <nav class="hero__nav" aria-label="Menu utama">
+            <a href="#media">Media</a>
+            <a href="#tentang">Tentang</a>
+            <a href="#stats" class="hero__nav-stat">Pengunjung</a>
+        </nav>
+
+        <div class="hero__inner">
+            <div class="hero__copy">
+                <h1 class="brand">
+                    <span class="brand__mark" aria-hidden="true">
+                        <span class="brand__letter">ب</span>
+                    </span>
+                    <span class="brand__name">Titik Arab</span>
+                    <span class="sr-only"> — Media Interaktif Bahasa Arab</span>
+                </h1>
+
+                <p class="rot" aria-label="Belajar Arab sambil main. Putar roda, bikin kalimat. Tantang bot atau teman.">
+                    <span aria-hidden="true">Belajar Arab sambil main...</span>
+                    <span aria-hidden="true">Putar roda, bikin kalimat...</span>
+                    <span aria-hidden="true">Tantang bot atau teman...</span>
+                </p>
+                <p class="hero__sub">Media interaktif bahasa Arab. Gratis, buka dari HP. <b>Gak ribet!</b></p>
+
+                <div class="hero__cta">
+                    <a class="cta" href="#media">Mulai main <span aria-hidden="true">→</span></a>
+                    <a class="cta cta--ghost" href="#tentang">Kenalan dulu</a>
+                </div>
+            </div>
+
+            <!-- Panggung ilustrasi yang melayang (hiasan saja) -->
+            <div class="stage" id="stage" aria-hidden="true">
+
+                <div class="px px--card2" style="--d:10">
+                    <div class="fl" style="--dur:6.5s;--dl:-1s">
+                        <div class="gcard gcard--orange"><i>HarakaPlay</i><b>تُ</b></div>
+                    </div>
+                </div>
+
+                <div class="px px--card1" style="--d:18">
+                    <div class="fl" style="--dur:5.5s;--dl:-3s">
+                        <div class="gcard gcard--pink"><i>Haraka Asasi</i><b>بَ</b></div>
+                    </div>
+                </div>
+
+                <div class="px px--wheel" style="--d:26">
+                    <div class="fl" style="--dur:7s">
+                        <div class="wheelbox">
+                            <span class="wheelbox__ptr"></span>
+                            <div class="wheelbox__disc">
+                                <span style="--i:0">س</span><span style="--i:1">ك</span><span style="--i:2">ب</span>
+                                <span style="--i:3">ل</span><span style="--i:4">م</span><span style="--i:5">ج</span>
+                            </div>
+                            <span class="wheelbox__hub"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px px--toast" style="--d:30">
+                    <div class="fl" style="--dur:6s;--dl:-2s">
+                        <div class="toast"><small>Pemain baru menjawab benar!</small><span><b lang="ar">مُمْتَاز!</b> +3 ⭐</span></div>
+                    </div>
+                </div>
+
+                <div class="px px--prog" style="--d:34">
+                    <div class="fl" style="--dur:5s;--dl:-4s">
+                        <div class="prog"><small>Haraka Syadid · Tema Sekolah</small><span class="prog__bar"><i></i></span></div>
+                    </div>
+                </div>
+
+                <div class="px px--mascot" style="--d:40">
+                    <div class="fl" style="--dur:4.2s">
+                        <img class="mascot" src="assets/img/maskot-salam.webp" alt="" width="620" height="500">
+                    </div>
+                </div>
+
+                <span class="spark spark--1">✦</span>
+                <span class="spark spark--2">✦</span>
+                <span class="spark spark--3">✦</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================== PITA KATA (berjalan) ===================== -->
+    <div class="ribbon" aria-hidden="true">
+        <div class="ribbon__track" id="ribbonTrack"></div>
+    </div>
+
+    <main class="home">
 
         <!-- ===== Daftar media (dibuat otomatis dari media-list.js) ===== -->
         <section id="media" class="block" aria-labelledby="mediaTitle">
-            <h2 class="block-title" id="mediaTitle">Pilih Media</h2>
+            <h2 class="block-title reveal" id="mediaTitle">Pilih Media</h2>
+            <p class="block-sub reveal">Klik kartunya, langsung gas!</p>
             <div class="grid" id="mediaGrid"></div>
         </section>
 
-        <!-- ===== Tentang ===== -->
-        <section class="block panel about" aria-labelledby="aboutTitle">
-            <h2 class="block-title" id="aboutTitle"></h2>
-            <div class="about__text" id="aboutText"></div>
-            <div class="social-row" id="socialRow"></div>
-        </section>
+        <!-- ===== Kenalan: kotak-kotak bento ===== -->
+        <div class="bento">
 
-        <!-- ===== Statistik kunjungan ===== -->
-        <section class="block panel stats" id="stats" aria-labelledby="statsTitle">
-            <h2 class="block-title" id="statsTitle">Pengunjung Titik Arab 🌍</h2>
-            <div id="statsBody">
-                <p class="stats__none">Memuat…</p>
-            </div>
-        </section>
+            <!-- Tentang -->
+            <section id="tentang" class="tile tile--about reveal" aria-labelledby="aboutTitle">
+                <img class="tile__mas mas--buku" src="assets/img/maskot-buku.webp" alt="Maskot Titik Arab sedang membaca buku" width="620" height="493" loading="lazy">
+                <h2 class="tile__title" id="aboutTitle"></h2>
+                <div class="about__text" id="aboutText"></div>
+            </section>
 
-        <!-- ===== Dukungan sukarela ===== -->
-        <section class="block panel support" aria-labelledby="supportTitle">
-            <h2 class="block-title" id="supportTitle"></h2>
-            <p class="support__text" id="supportText"></p>
-            <div class="support__actions" id="supportActions"></div>
-        </section>
+            <!-- Sosial -->
+            <section class="tile tile--social reveal" aria-labelledby="socTitle">
+                <h2 class="tile__title" id="socTitle">Ngobrol yuk! 💬</h2>
+                <p class="tile__lead">Sapa dan ikuti aku di sini:</p>
+                <div class="social-row" id="socialRow"></div>
+            </section>
+
+            <!-- Statistik kunjungan -->
+            <section class="tile tile--stats reveal" id="stats" aria-labelledby="statsTitle">
+                <h2 class="tile__title" id="statsTitle">Pengunjung Titik Arab 🌍</h2>
+                <div id="statsBody"><p class="stats__none">Memuat…</p></div>
+            </section>
+
+            <!-- Dukungan sukarela -->
+            <section class="tile tile--support reveal" aria-labelledby="supportTitle">
+                <img class="tile__mas mas--batu" src="assets/img/maskot-batu.webp" alt="Maskot Titik Arab mengangkat batu bata" width="620" height="553" loading="lazy">
+                <h2 class="tile__title" id="supportTitle"></h2>
+                <p class="support__text" id="supportText"></p>
+                <p class="support__chip">Bantu aku angkat batu bata berikutnya 🧱</p>
+                <div class="support__actions" id="supportActions"></div>
+            </section>
+        </div>
 
         <!-- ===== Kaki halaman ===== -->
         <footer class="foot">
