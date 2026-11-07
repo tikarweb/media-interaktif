@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Ubin Titik — Mahjong Solitaire Belajar Arab</title>
+    <meta name="description" content="Cocokkan ubin Arab dengan pasangannya: huruf, harakat, dan kosakata. Mahjong solitaire untuk belajar bahasa Arab, gratis dan bisa dimainkan di HP.">
+    <meta name="theme-color" content="#0b1f3a">
+    <link rel="stylesheet" href="../../assets/css/fonts.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="ub-body">
+    <div class="ub-bg" aria-hidden="true"></div>
+
+    <!-- ============ MENU ============ -->
+    <main id="viewMenu" class="view">
+        <header class="ub-top">
+            <a class="ub-btn ub-btn--ghost" href="../../index.html">← Beranda</a>
+            <span class="ub-spacer"></span>
+            <button class="ub-btn ub-btn--icon" id="helpBtn" type="button" aria-label="Cara main">?</button>
+            <button class="ub-btn ub-btn--icon" id="soundBtn" type="button" aria-label="Suara">🔊</button>
+        </header>
+
+        <section class="ub-hero">
+            <div class="ub-hero__copy">
+                <h1 class="ub-title">Ubin <span>Titik</span></h1>
+                <p class="ub-tag">Mahjong solitaire untuk belajar Arab.<br>Cocokkan ubin, kosongkan papan!</p>
+                <button class="ub-btn ub-btn--go" id="quickBtn" type="button">Main cepat ▸</button>
+            </div>
+            <div class="ub-hero__art" aria-hidden="true">
+                <div class="demo">
+                    <span class="demo__tile demo__tile--a" lang="ar">كِتَابٌ</span>
+                    <span class="demo__tile demo__tile--b">buku</span>
+                    <span class="demo__spark">✦</span>
+                </div>
+                <img class="ub-mascot" src="../../assets/img/maskot-buku.webp" alt="" width="620" height="493">
+            </div>
+        </section>
+
+        <div id="levels"></div>
+        <p class="ub-foot">Titik Arab · setiap ubin punya pasangan. Temukan hubungannya!</p>
+    </main>
+
+    <!-- ============ PERMAINAN ============ -->
+    <main id="viewGame" class="view view--game" hidden>
+        <header class="ub-top ub-top--game">
+            <button class="ub-btn ub-btn--ghost" id="backBtn" type="button">← Menu</button>
+            <div class="ub-gtitle"><b id="gTitle">Tema</b><small id="gSub">Kecil</small></div>
+            <button class="ub-btn ub-btn--icon" id="soundBtn2" type="button" aria-label="Suara">🔊</button>
+        </header>
+
+        <div class="hud" aria-live="polite">
+            <div class="hud__cell"><small>Sisa</small><b id="hudLeft">0</b></div>
+            <div class="hud__cell"><small>Salah</small><b id="hudMiss">0</b></div>
+            <div class="hud__cell hud__cell--stars" id="hudStars" aria-label="Bintang"><span>★</span><span>★</span><span>★</span></div>
+            <div class="hud__cell"><small>Waktu</small><b id="hudTime">0:00</b></div>
+        </div>
+
+        <div class="board-wrap" id="boardWrap">
+            <div class="board" id="board" role="group" aria-label="Papan ubin"></div>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast__txt" id="toastTxt">Ketuk ubin yang ujungnya kosong, lalu cari pasangannya.</span></div>
+
+        <footer class="tools">
+            <button class="tool" id="hintBtn" type="button"><span>💡</span>Petunjuk</button>
+            <button class="tool" id="undoBtn" type="button"><span>↩</span>Batal</button>
+            <button class="tool" id="shuffleBtn" type="button"><span>🔀</span>Acak</button>
+        </footer>
+    </main>
+
+    <!-- ============ DIALOG: pilih ukuran ============ -->
+    <div class="modal" id="sheet" hidden>
+        <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+            <button class="modal__x" data-close type="button" aria-label="Tutup">×</button>
+            <p class="sheet__ic" id="sheetIcon" aria-hidden="true"></p>
+            <h2 id="sheetTitle">Tema</h2>
+            <p class="sheet__ket" id="sheetKet"></p>
+            <div class="sizes" id="sizes"></div>
+            <p class="sheet__note" id="sheetNote"></p>
+        </div>
+    </div>
+
+    <!-- ============ DIALOG: hasil ============ -->
+    <div class="modal" id="result" hidden>
+        <div class="modal__box modal__box--result" role="dialog" aria-modal="true" aria-labelledby="resTitle">
+            <img class="res__mascot" src="../../assets/img/maskot-salam.webp" alt="" width="620" height="500">
+            <h2 id="resTitle">Selesai!</h2>
+            <div class="res__stars" id="resStars" aria-hidden="true"></div>
+            <p class="res__stat" id="resStat"></p>
+            <div class="res__review" id="resReview"></div>
+            <div class="res__btns">
+                <button class="ub-btn ub-btn--go" id="againBtn" type="button">Main lagi</button>
+                <button class="ub-btn ub-btn--ghost" id="menuBtn" type="button">Pilih tema lain</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ DIALOG: cara main ============ -->
+    <div class="modal" id="help" hidden>
+        <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+            <button class="modal__x" data-close type="button" aria-label="Tutup">×</button>
+            <h2 id="helpTitle">Cara main</h2>
+            <ol class="howto">
+                <li><b>Ubin bebas</b> = tidak tertimpa ubin lain <em>dan</em> sisi kiri atau kanannya kosong. Ubin yang tertutup tampak lebih gelap.</li>
+                <li><b>Ketuk dua ubin bebas yang berpasangan.</b> Satu ubin putih (Arab) + satu ubin berwarna (artinya/bunyinya). Cocok = hilang.</li>
+                <li><b>Kosongkan papan.</b> Buntu? Pakai <b>Acak</b>. Ragu? Pakai <b>Petunjuk</b>, tapi bintang berkurang.</li>
+            </ol>
+            <p class="howto__note">Papan dibuat supaya <b>selalu bisa diselesaikan</b>. Di akhir ada rangkuman kata yang masih sering keliru.</p>
+            <button class="ub-btn ub-btn--go" data-close type="button">Mengerti!</button>
+        </div>
+    </div>
+
+    <script src="js/engine.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

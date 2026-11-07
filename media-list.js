@@ -32,7 +32,14 @@ const MEDIA_LIST = [
     href: 'media/harakaplay/index.html',
     status: 'ready'
   },
-  { emoji: '🧩', title: 'Media berikutnya', desc: 'Tempat untuk media interaktif selanjutnya.', status: 'soon' },
+  {
+    emoji: '🧩',
+    ar: 'قِطَعُ الْكَلِمَاتِ',
+    title: 'Ubin Titik',
+    desc: 'Mahjong solitaire untuk belajar Arab: cocokkan ubin huruf, harakat, dan kosakata dengan pasangannya. Dari pemula sampai mahir, banyak tema.',
+    href: 'media/ubin-titik/index.html',
+    status: 'draft'
+  },
   { emoji: '🎯', title: 'Media berikutnya', desc: 'Tempat untuk media interaktif selanjutnya.', status: 'soon' },
   { emoji: '🏆', title: 'Media berikutnya', desc: 'Tempat untuk media interaktif selanjutnya.', status: 'soon' }
 ];
